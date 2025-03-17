@@ -1,8 +1,7 @@
 package me.jetby.treexbuyer.loader;
 
-import me.jetby.treexbuyer.Menu.Menu;
-import me.jetby.treexbuyer.Menu.MenuButton;
-import me.jetby.treexbuyer.autoBuy.AutoBuy;
+import me.jetby.treexbuyer.menu.Menu;
+import me.jetby.treexbuyer.menu.MenuButton;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;

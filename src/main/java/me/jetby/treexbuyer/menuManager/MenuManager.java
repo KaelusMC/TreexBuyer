@@ -1,7 +1,7 @@
-package me.jetby.treexbuyer.MenuManager;
+package me.jetby.treexbuyer.menuManager;
 
 import me.jetby.treexbuyer.Main;
-import me.jetby.treexbuyer.Menu.Menu;
+import me.jetby.treexbuyer.menu.Menu;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
 import me.jetby.treexbuyer.utils.Hex;
 import org.bukkit.Bukkit;

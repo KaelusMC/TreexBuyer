@@ -1,12 +1,10 @@
-package me.jetby.treexbuyer.MenuListener;
+package me.jetby.treexbuyer.menuListener;
 
 import me.jetby.treexbuyer.Main;
-import me.jetby.treexbuyer.Menu.Menu;
-import me.jetby.treexbuyer.Menu.MenuButton;
+import me.jetby.treexbuyer.menu.Menu;
+import me.jetby.treexbuyer.menu.MenuButton;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
 import me.jetby.treexbuyer.buttonCommand.SellZone;
-import me.jetby.treexbuyer.loader.PriseItemLoader;
-import me.jetby.treexbuyer.utils.Hex;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

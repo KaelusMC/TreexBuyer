@@ -1,8 +1,8 @@
 package me.jetby.treexbuyer;
 
-import me.jetby.treexbuyer.Menu.Menu;
-import me.jetby.treexbuyer.MenuListener.MenuListener;
-import me.jetby.treexbuyer.MenuManager.MenuManager;
+import me.jetby.treexbuyer.menu.Menu;
+import me.jetby.treexbuyer.menuListener.MenuListener;
+import me.jetby.treexbuyer.menuManager.MenuManager;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
 import me.jetby.treexbuyer.commands.Seller;
 import me.jetby.treexbuyer.createDefaultYml.ConfigManager;
@@ -22,12 +22,8 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -58,7 +54,8 @@ public final class Main extends JavaPlugin {
 
         saveDefaultConfig();
         cfg = getConfig();
-        new ConfigManager(this);
+        ConfigManager configManager = new ConfigManager();
+        configManager.loadYamlFiles(this);
         new PriseItemFileCreator(this);
 
         MenuLoader.loadMenus(cfg, getDataFolder()); // загрузчик

@@ -1,4 +1,4 @@
-package me.jetby.treexbuyer.Menu;
+package me.jetby.treexbuyer.menu;
 
 import org.bukkit.Material;
 

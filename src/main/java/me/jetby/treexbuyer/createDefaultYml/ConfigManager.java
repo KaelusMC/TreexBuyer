@@ -1,6 +1,8 @@
 package me.jetby.treexbuyer.createDefaultYml;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -8,78 +10,45 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigManager {
-    private final File menuFolder;
+    public void loadYamlFiles(Plugin plugin) {
+        File typesFolder = new File(plugin.getDataFolder(), "Menu");
 
-    public ConfigManager(JavaPlugin plugin) {
-        this.menuFolder = new File(plugin.getDataFolder(), "Menu");
-
-        // Создаем папку Menu, если её нет
-        if (!menuFolder.exists()) {
-            menuFolder.mkdirs();
+        if (!typesFolder.exists()) {
+            typesFolder.mkdirs();
+            createDefaultFiles(plugin, typesFolder);
         }
 
-        // Создаем конфигурационные файлы, если их нет
-        createConfig("seller.yml",
-                "titleMenu: Скупщик\n" +
-                        "commandOpenMenu:\n" +
-                        "- 'seller'\n" +
-                        "- 'sell'\n" +
-                        "- 'openseller'\n" +
-                        "permissionOpenMenu: none\n" +
-                        "size: 54\n" +
-                        "menuItems:\n" +
-                        "  buttonSell:\n" +
-                        "    material: AIR\n" +
-                        "    slot: 0-40\n" +
-                        "    displayButton: ' '\n" +
-                        "    loreButton: []\n" +
-                        "    command:\n" +
-                        "    - '[sell_zone]'\n" +
-                        "  buttonSell2:\n" +
-                        "    material: DIRT\n" +
-                        "    slot: 49\n" +
-                        "    displayButton: ' '\n" +
-                        "    loreButton:\n" +
-                        "    - '&fНажмите чтобы сдать все предметы'\n" +
-                        "    - '&fПредметов на сумму: %seller_pay%'\n" +
-                        "    command:\n" +
-                        "    - '[sell_all]'\n" +
-                        "  categor:\n" +
-                        "    material: APPLE\n" +
-                        "    slot: 45\n" +
-                        "    displayButton: ' '\n" +
-                        "    loreButton:\n" +
-                        "    - ' '\n" +
-                        "    command:\n" +
-                        "    - '[open_menu] category'");
+        File[] yamlFiles = typesFolder.listFiles((dir, name) -> name.endsWith(".yml"));
 
-        createConfig("mine.yml",
-                "titleMenu: \"Ресурсы с шахты\"\n" +
-                        "commandOpenMenu:\n" +
-                        "- 'mine'\n" +
-                        "permissionOpenMenu: none\n" +
-                        "size: 54");
-
-        createConfig("mobs.yml",
-                "titleMenu: \"Ресурсы с мобов\"\n" +
-                        "commandOpenMenu:\n" +
-                        "- 'openmob'\n" +
-                        "permissionOpenMenu: none\n" +
-                        "size: 54");
-    }
-
-    private void createConfig(String fileName, String defaultContent) {
-        File file = new File(menuFolder, fileName);
-        if (!file.exists()) {
-            try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-                writer.write(defaultContent);
-                Bukkit.getLogger().info("Создан конфигурационный файл: " + fileName);
-            } catch (IOException e) {
-                Bukkit.getLogger().severe("Не удалось создать конфигурационный файл: " + fileName);
-                e.printStackTrace();
+        if (yamlFiles != null) {
+            for (File yamlFile : yamlFiles) {
+                YamlConfiguration config = YamlConfiguration.loadConfiguration(yamlFile);
+                configs.put(yamlFile.getName(), config); // Сохраняем конфигурацию в Map
             }
         }
     }
+
+    private void createDefaultFiles(Plugin plugin, File typesFolder) {
+        String[] defaultFiles = {"mine.yml", "mobs.yml", "seller.yml"};
+        for (String fileName : defaultFiles) {
+            File file = new File(typesFolder, fileName);
+            if (!file.exists()) {
+                plugin.saveResource("Menu/" + fileName, false);
+            }
+        }
+    }
+
+    // Поле для хранения всех загруженных конфигураций
+    private final Map<String, YamlConfiguration> configs = new HashMap<>();
+
+    // Получение конфигурации по имени файла
+    public YamlConfiguration getConfig(String name) {
+        return configs.get(name + ".yml");
+    }
+
+
 }

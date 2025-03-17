@@ -1,22 +1,58 @@
 titleMenu: "Ресурсы с мобов"
-commandOpenMenu:
-  - 'openmob'
+
 permissionOpenMenu: none
 size: 54
 menuItems:
-  testpro:
+
+  apple:
     material: APPLE
     slot: 10
-    displayButton: ' '
     loreButton:
-      - ' '
+      - ''
+      - '&fЦена: %price%'
+      - '&fСтатус автоскупки: %auto_sell_toggle_state%'
+      - ''
+      - '&7Нажмите чтобы переключить'
     command:
       - '[auto_buy]'
-  testpro2:
-    material: BONE
-    slot: 11
-    displayButton: ' '
+
+  menuMobs:
+    material: COW_SPAWN_EGG
+    slot: 5
+    displayButton: "&dРесурсы с мобов"
     loreButton:
-      - ' '
+      - " "
+      - "&fКликните чтобы открыть"
+      - " "
     command:
-      - '[auto_buy]'
+      - '[open_menu] mobs'
+
+
+  menuMine:
+    material: DIAMOND_PICKAXE
+    slot: 3
+    displayButton: "&6Ресурсы с шахты"
+    loreButton:
+      - " "
+      - "&fКликните чтобы открыть"
+      - " "
+    command:
+      - '[open_menu] mine'
+  background:
+    material: WHITE_STAINED_GLASS_PANE
+    slot:
+      - 0
+      - 1
+      - 2
+      - 6-8
+      - 9
+      - 17
+      - 18
+      - 26
+      - 27
+      - 35
+      - 36
+      - 44
+      - 45-53
+    displayButton: ""
+
