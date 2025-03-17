@@ -1,4 +1,4 @@
-# обычная стоимость предметов
+# Обычная стоимость предметов
 NETHERITE_INGOT: 10000
 NETHERITE_SCRAP: 2000
 EMERALD: 1500
@@ -9,4 +9,9 @@ REDSTONE: 15
 LAPIS_LAZULI: 5
 COAL: 8
 QUARTZ: 10
+BONE: 5
+LEATHER: 15
+STRING: 25
+SPIDER_EYE: 50
+
 

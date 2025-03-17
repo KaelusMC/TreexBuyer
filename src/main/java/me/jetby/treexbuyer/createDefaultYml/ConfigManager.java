@@ -27,7 +27,7 @@ public class ConfigManager {
         if (yamlFiles != null) {
             for (File yamlFile : yamlFiles) {
                 YamlConfiguration config = YamlConfiguration.loadConfiguration(yamlFile);
-                configs.put(yamlFile.getName(), config); // Сохраняем конфигурацию в Map
+                configs.put(yamlFile.getName(), config);
             }
         }
     }
@@ -42,13 +42,6 @@ public class ConfigManager {
         }
     }
 
-    // Поле для хранения всех загруженных конфигураций
     private final Map<String, YamlConfiguration> configs = new HashMap<>();
-
-    // Получение конфигурации по имени файла
-    public YamlConfiguration getConfig(String name) {
-        return configs.get(name + ".yml");
-    }
-
 
 }

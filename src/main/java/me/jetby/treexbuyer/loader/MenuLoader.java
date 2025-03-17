@@ -15,7 +15,7 @@ public class MenuLoader {
     private static Map<String, Menu> listMenu = new HashMap<>();
 
     public static void loadMenus(FileConfiguration config, File dataFolder) {
-        // Получаем пути к файлам меню
+
         for (String menuId : config.getConfigurationSection("menu").getKeys(false)) {
             String filePath = config.getString("menu." + menuId + ".path");
             File menuFile = new File(dataFolder, filePath);
@@ -29,16 +29,16 @@ public class MenuLoader {
     }
 
     private static void loadMenuFromFile(String menuId, File menuFile) {
-        // Загружаем YAML файл
+
         FileConfiguration menuConfig = YamlConfiguration.loadConfiguration(menuFile);
 
-        // Получаем данные меню
+
         String titleMenu = menuConfig.getString("titleMenu");
         int size = menuConfig.getInt("size");
         List<String> commandOpenMenu = menuConfig.getStringList("commandOpenMenu");
         String permissionOpenMenu = menuConfig.getString("permissionOpenMenu");
 
-        // Загружаем кнопки меню
+
         List<MenuButton> buttons = new ArrayList<>();
         if (menuConfig.contains("menuItems")) {
             for (String buttonKey : menuConfig.getConfigurationSection("menuItems").getKeys(false)) {
@@ -58,7 +58,7 @@ public class MenuLoader {
                 boolean enchanted = menuConfig.getBoolean("menuItems." + buttonKey + ".enchanted", false);
 
 
-                // Создаем кнопки для каждого слота
+
                 for (int slot : slots) {
                     MenuButton menuButton = new MenuButton(slot, titleButton, loreButton, material, commands, hide_enchantments, hide_attributes, enchanted);
                     buttons.add(menuButton);
@@ -67,10 +67,10 @@ public class MenuLoader {
             }
         }
 
-        // Создаем объект Menu
+
         Menu menu = new Menu(menuId, titleMenu, size, commandOpenMenu, permissionOpenMenu, buttons);
 
-        // Добавляем меню в список
+
         listMenu.put(menuId, menu);
     }
 

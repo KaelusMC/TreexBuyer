@@ -18,7 +18,7 @@ public class DatabaseManager {
         try {
             File dbFile = new File("plugins/TreexBuyer/data.db");
             if (!dbFile.getParentFile().exists()) {
-                dbFile.getParentFile().mkdirs(); // Создаём папку, если её нет
+                dbFile.getParentFile().mkdirs();
             }
             this.connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
             this.createTable();

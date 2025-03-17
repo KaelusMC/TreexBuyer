@@ -11,11 +11,9 @@ public class AutoBuy {
 
     public static void checkPlayer(UUID uuid) {
         if (Main.getInstance().getDatabaseManager().recordExists(uuid.toString())) {
-            // Загружаем данные из базы данных, если игрок существует
             autoBuyPlayers.put(uuid, Main.getInstance().getDatabaseManager().getPlayerData(uuid.toString()));
             System.out.println("Данные игрока загружены из базы данных.");
         } else {
-            // Если игрок не найден, инициализируем пустой список
             autoBuyPlayers.put(uuid, new ArrayList<>());
             System.out.println("Игрок не найден в базе данных. Инициализирован пустой список.");
         }
@@ -29,16 +27,13 @@ public class AutoBuy {
         }
 
         if (autoBuyList.contains(item)) {
-            // Если предмет уже есть в списке, удаляем его
             autoBuyList.remove(item);
             System.out.println("Предмет удален из списка автоскупки: " + item);
         } else {
-            // Если предмета нет в списке, добавляем его
             autoBuyList.add(item);
             System.out.println("Предмет добавлен в список автоскупки: " + item);
         }
 
-        // Сохраняем изменения в базу данных
         Main.getInstance().getDatabaseManager().addOrUpdatePlayerData(uuid.toString(), autoBuyList);
     }
 

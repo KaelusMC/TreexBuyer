@@ -17,7 +17,7 @@ public class SellZone {
 
     private static Map<UUID, Double> countPlayer = new HashMap<>();
     public static void checkItem(List<ItemStack> itemStacks, Map<String, Double> prise, Player player) {
-        countPlayer.put(player.getUniqueId(), 0d); // Вместо удаления сразу ставим 0
+        countPlayer.put(player.getUniqueId(), 0d);
 
         Map<Material, Double> materialPrise = new HashMap<>();
         prise.forEach((key, vault) -> {
@@ -53,7 +53,7 @@ public class SellZone {
     public static String getCountPlayerString(UUID uuid, Integer residue) {
         Double value = countPlayer.get(uuid);
         if (value == null) {
-            return "0"; // Или другое значение по умолчанию
+            return "0";
         }
 
         // Создаем BigDecimal из значения, чтобы можно было легко округлять

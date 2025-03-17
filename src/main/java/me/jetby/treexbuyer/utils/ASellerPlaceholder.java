@@ -28,7 +28,7 @@ public class ASellerPlaceholder extends PlaceholderExpansion {
     @Override
     public String getIdentifier() {
 
-        return "seller";
+        return "buyer";
     }
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {

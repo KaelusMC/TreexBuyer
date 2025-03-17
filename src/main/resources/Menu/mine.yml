@@ -9,7 +9,8 @@ menuItems:
     material: WHITE_STAINED_GLASS_PANE
     slot:
       - 0-2
-      - 7-17
+      - 4
+      - 6-17
       - 36-52
     displayButton: ""
 
@@ -148,7 +149,7 @@ menuItems:
 
   menuMine:
     material: NETHERITE_INGOT
-    slot: 2
+    slot: 3
     displayButton: "&6■ &fКатегория: &6Ресурсы из шахты &6■"
     command:
       - '[open_menu] mine'

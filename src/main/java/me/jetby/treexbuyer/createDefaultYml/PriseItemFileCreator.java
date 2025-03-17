@@ -15,13 +15,11 @@ public class PriseItemFileCreator {
         this.plugin = plugin;
         File priseItemFile = new File(plugin.getDataFolder(), "priseItem.yml");
 
-        // Проверяем, существует ли файл
         if (!priseItemFile.exists()) {
             createDefaultFile(priseItemFile);
         }
     }
 
-    // Создание файла с начальными данными
     private void createDefaultFile(File file) {
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             writer.write("# Обычная стоимость предметов\n");

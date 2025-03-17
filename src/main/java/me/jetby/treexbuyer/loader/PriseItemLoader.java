@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PriseItemLoader {
-    // Метод для загрузки данных из файла в Map
+
     public static Map<String, Double> loadItemValuesFromFile(File file) {
         Map<String, Double> itemValues = new HashMap<>();
         if (!file.exists()) {
@@ -19,7 +19,7 @@ public class PriseItemLoader {
 
         FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(file);
 
-        // Проход по всем ключам верхнего уровня в конфигурации
+
         for (String key : fileConfig.getKeys(false)) {
             double value = fileConfig.getDouble(key);
             itemValues.put(key, value);

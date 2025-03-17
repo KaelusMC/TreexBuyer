@@ -40,23 +40,17 @@ public class MenuListener implements Listener {
             return;
         }
 
-
-
-
-        // Проверяем, что верхний инвентарь принадлежит игроку
         Inventory topInventory = event.getInventory();
         if (!(topInventory.getHolder() instanceof Menu menu)) {
             return;
         }
 
-        // Проверяем, что событие связано с быстрым перемещением (Shift + ЛКМ)
         if (event.isShiftClick() && (!clickedInventory.equals(topInventory))) {
             ItemStack clickedItem = event.getCurrentItem();
             if (clickedItem == null) {
                 return;
             }
 
-            // Проверяем, есть ли свободные слоты в зоне продажи [sell_zone]
             boolean hasFreeSlot = false;
             for (MenuButton button : menu.getButtons()) {
                 if (button.getCommand().contains("[sell_zone]")) {
@@ -69,18 +63,16 @@ public class MenuListener implements Listener {
                 }
             }
 
-            // Если нет свободных слотов, отменяем перемещение предмета
             if (!hasFreeSlot) {
                 event.setCancelled(true);
             } else {
-                // Если есть свободные слоты, перенаправляем предмет в первый свободный слот зоны продаж
                 for (MenuButton button : menu.getButtons()) {
                     if (button.getCommand().contains("[sell_zone]")) {
                         int slot = button.getSlotButton();
                         ItemStack itemInSlot = topInventory.getItem(slot);
                         if (itemInSlot == null) {
                             topInventory.setItem(slot, clickedItem);
-                            event.setCurrentItem(null); // Убираем предмет из текущего слота
+                            event.setCurrentItem(null);
                             break;
                         }
                     }
@@ -93,27 +85,21 @@ public class MenuListener implements Listener {
             for (int i = 0; i < topInventory.getSize(); i++) {
                 ItemStack itemStack = topInventory.getItem(i);
                 if (itemStack != null) {
-                    // Проверяем, относится ли слот к зоне продаж (sell_zone)
                     for (MenuButton btn : menu.getButtons()) {
                         if (btn.getSlotButton() == i && btn.getCommand().contains("[sell_zone]")) {
                             itemStacks.add(itemStack);
-                            break; // Прекращаем проверку других кнопок
+                            break;
                         }
                     }
                 }
             }
 
             SellZone.checkItem(itemStacks, Main.getInstance().getItemPrise(), player);
-            // Обновляем лор кнопок
             for (MenuButton btn : menu.getButtons()) {
-                // Обновляем лор кнопки
-
-                // Обновляем предмет в инвентаре
                 updateLoreButton(btn, topInventory, SellZone.getCountPlayerString(player.getUniqueId(), 0), player);
             }
         }, 1L);
 
-        // Проверяем, что клик был в верхнем инвентаре
         if (!clickedInventory.equals(topInventory)) {
             return;
         }
@@ -206,12 +192,12 @@ public class MenuListener implements Listener {
                             break;
                     }
                 }
-                break; // Выходим из цикла, так как слот уже обработан
+                break;
             }
         }
 
 
-        event.setCancelled(true); // Отменить стандартное поведение для не [sell_zone] слотов
+        event.setCancelled(true);
     }
 
     @EventHandler
@@ -224,50 +210,42 @@ public class MenuListener implements Listener {
 
         Player player = (Player) event.getWhoClicked();
 
-        // Получаем слоты, в которые игрок пытается переместить предметы
         for (Integer slot : event.getRawSlots()) {
-            // Проверяем, относится ли слот к верхнему инвентарю
             if (slot >= topInventory.getSize()) {
-                continue; // Игнорируем слоты нижнего инвентаря
+                continue;
             }
 
             boolean isAllowedSlot = false;
 
-            // Проверяем, относится ли слот к разрешенным слотам [sell_zone]
             for (MenuButton button : menu.getButtons()) {
                 if (slot == button.getSlotButton() && button.getCommand().contains("[sell_zone]")) {
                     isAllowedSlot = true;
-                    break; // Выходим из цикла, так как слот является допустимым
+                    break;
                 }
             }
 
-            // Если хотя бы один слот не является разрешенным, отменяем действие
             if (!isAllowedSlot) {
                 event.setCancelled(true);
                 return;
             }
         }
 
-        // Если все слоты разрешены, запускаем проверку предметов
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             List<ItemStack> itemStacks = new ArrayList<>();
             for (int i = 0; i < topInventory.getSize(); i++) {
                 ItemStack itemStack = topInventory.getItem(i);
                 if (itemStack != null) {
-                    // Проверяем, относится ли слот к зоне продаж (sell_zone)
+
                     for (MenuButton btn : menu.getButtons()) {
                         if (btn.getSlotButton() == i && btn.getCommand().contains("[sell_zone]")) {
                             itemStacks.add(itemStack);
-                            break; // Прекращаем проверку других кнопок
+                            break;
                         }
                     }
                 }
             }
             SellZone.checkItem(itemStacks, Main.getInstance().getItemPrise(), player);
             for (MenuButton btn : menu.getButtons()) {
-                // Обновляем лор кнопки
-
-                // Обновляем предмет в инвентаре
                 updateLoreButton(btn, topInventory, SellZone.getCountPlayerString(player.getUniqueId(), 0), player);
             }
         }, 1L);
@@ -298,31 +276,25 @@ public class MenuListener implements Listener {
             return;
         }
 
-        // Логирование закрытия меню
-
-        // Обработка предметов из sell_zone
         menu.getButtons().stream()
                 .filter(button -> button.getCommand().contains("[sell_zone]"))
                 .forEach(button -> {
                     ItemStack item = topInventory.getItem(button.getSlotButton());
                     if (item != null) {
-                        // Возвращаем предмет игроку или выбрасываем на землю
                         if (player.getInventory().firstEmpty() == -1) {
                             player.getWorld().dropItem(player.getLocation(), item);
                         } else {
                             player.getInventory().addItem(item);
                         }
-                        // Очищаем слот после возврата предмета
                         topInventory.setItem(button.getSlotButton(), null);
                     }
                 });
 
-        // Очищаем данные sell_zone для игрока
         SellZone.clearPlayer(playerUUID);
     }
 
     public static void updateLoreButton(MenuButton button, Inventory topInventory, String count, Player player) {
-        // Проверяем команду и обновляем лор только для тех, у которых нет [sell_zone]
+
         if (!button.getCommand().contains("[sell_zone]")) {
             ItemStack itemStack = new ItemStack(button.getMaterialButton());
             ItemMeta meta = itemStack.getItemMeta();

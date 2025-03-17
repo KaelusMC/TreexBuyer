@@ -3,56 +3,90 @@ titleMenu: "Ресурсы с мобов"
 permissionOpenMenu: none
 size: 54
 menuItems:
+  background:
+    material: WHITE_STAINED_GLASS_PANE
+    slot:
+      - 0-2
+      - 4
+      - 6-17
+      - 36-52
+    displayButton: ""
 
-  apple:
-    material: APPLE
-    slot: 10
+
+  BONE:
+    material: BONE
+    slot: 18
     loreButton:
+      - ' &fЦена &a&l$%price% '
       - ''
-      - '&fЦена: %price%'
-      - '&fСтатус автоскупки: %auto_sell_toggle_state%'
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
       - ''
-      - '&7Нажмите чтобы переключить'
     command:
       - '[auto_buy]'
+
+
+  LEATHER:
+    material: LEATHER
+    slot: 19
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+  STRING:
+    material: STRING
+    slot: 20
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+
+  SPIDER_EYE:
+    material: SPIDER_EYE
+    slot: 21
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+
+
+
+
+
+
+  menuMine:
+    material: NETHERITE_INGOT
+    slot: 3
+    displayButton: "&6■ &fКатегория: &6Ресурсы из шахты &6■"
+    command:
+      - '[open_menu] mine'
 
   menuMobs:
     material: COW_SPAWN_EGG
     slot: 5
-    displayButton: "&dРесурсы с мобов"
-    loreButton:
-      - " "
-      - "&fКликните чтобы открыть"
-      - " "
+    displayButton: "&6■ &fКатегория: &6Ресурсы с мобов &6■"
     command:
       - '[open_menu] mobs'
 
-
-  menuMine:
-    material: DIAMOND_PICKAXE
-    slot: 3
-    displayButton: "&6Ресурсы с шахты"
-    loreButton:
-      - " "
-      - "&fКликните чтобы открыть"
-      - " "
+  back:
+    material: ARROW
+    slot: 53
+    displayButton: "&6Вернуться"
     command:
-      - '[open_menu] mine'
-  background:
-    material: WHITE_STAINED_GLASS_PANE
-    slot:
-      - 0
-      - 1
-      - 2
-      - 6-8
-      - 9
-      - 17
-      - 18
-      - 26
-      - 27
-      - 35
-      - 36
-      - 44
-      - 45-53
-    displayButton: ""
+      - '[open_menu] seller'
 

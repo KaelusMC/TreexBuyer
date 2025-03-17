@@ -59,7 +59,7 @@ public class MenuManager {
                             .map(s -> s.replace("%auto_sell_toggle_state%", hex(getCfg().getString("autoBuy.disable", "&cВыключен"))))
                             .map(s -> s.replace("%seller_pay%", "0")).toList());
 
-                    // Если предмета нет в списке, убираем зачарование
+
                     meta.removeEnchant(Enchantment.LUCK);
                     meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
                 }
