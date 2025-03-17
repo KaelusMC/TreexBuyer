@@ -1,6 +1,7 @@
 package me.jetby.treexbuyer.menuListener;
 
 import me.jetby.treexbuyer.Main;
+import me.jetby.treexbuyer.menu.Actions;
 import me.jetby.treexbuyer.menu.Menu;
 import me.jetby.treexbuyer.menu.MenuButton;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
@@ -35,11 +36,12 @@ public class MenuListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Inventory clickedInventory = event.getClickedInventory();
-        if (clickedInventory == null || !(event.getWhoClicked() instanceof Player)) {
+        if (clickedInventory == null || !(event.getWhoClicked() instanceof Player player)) {
             return;
         }
 
-        Player player = (Player) event.getWhoClicked();
+
+
 
         // Проверяем, что верхний инвентарь принадлежит игроку
         Inventory topInventory = event.getInventory();
@@ -118,110 +120,97 @@ public class MenuListener implements Listener {
 
         for (MenuButton button : menu.getButtons()) {
             if (event.getSlot() == button.getSlotButton()) {
-                if (button.getCommand().contains("[sell_zone]")) {
+                for (String command : button.getCommand()) {
+                    switch (command.toLowerCase()) {
 
-
-                    return;
-                } else if (button.getCommand().contains("[sell_all]")){
-                    event.setCancelled(true); // Отменяем стандартное поведение для этого слота
-
-                    // Собираем предметы из зоны продажи и подсчитываем сумму
-                    List<ItemStack> itemStacks = new ArrayList<>();
-                    for (MenuButton btn : menu.getButtons()) {
-                        if (btn.getCommand().contains("[sell_zone]")) {
-                            ItemStack item = topInventory.getItem(btn.getSlotButton());
-                            if (item != null) {
-                                itemStacks.add(item);
-
-                            }
-                        }
-                    }
-
-                    Double count = 0d;
-                    // Начисляем сумму и очищаем слоты
-                    count = SellZone.getCountPlayer(player.getUniqueId());
-                    if (count > 0) {
-                        Main.getInstance().economy.depositPlayer(player, count);
-                        for (int i = 0; i < topInventory.getSize(); i++){
-                            ItemStack itemStack = topInventory.getItem(i);
-                            if (itemStack != null) {
-                                Map<Material, Double> materialDoubleMap = Main.getInstance().getMaterialPrise(Main.getInstance().getItemPrise());
-                                int finalI = i;
-                                menu.getButtons().forEach(btn -> {
-                                    if(btn.getSlotButton() == finalI && btn.getCommand().contains("[sell_zone]")){
-                                        if (materialDoubleMap.containsKey(itemStack.getType())){       // тут происходит тотальный пиздец, если что это запись для меня или для ребят кто захотел что-то поделать в моём коде
-                                            topInventory.setItem(finalI, null);              // тут ты под грибами проверяешь кнопку перед удалением на то что является она sell_zone или нет
-
-                                        }
-                                    }
-                                });
-
-                            }
-                        }
-                        player.sendMessage(hex(Main.getCfg().getString("completeSaleMessage").replace("%sum%", String.valueOf(count))));
-                    } else {
-                            player.sendMessage(hex(Main.getCfg().getString("noItemsToSellMessage", "У вас нет предметов для продажи")));
+                        case "[sell_zone]":
                             return;
-                    }
-                    return;
 
-                } else if (button.getCommand().stream().anyMatch(command -> command.startsWith("[open_menu]"))) {
-                    event.setCancelled(true);
+                        case "[sell_all]":
+                            event.setCancelled(true);
 
-                    button.getCommand().stream()
-                            .filter(command -> command.startsWith("[open_menu]")) // Ищем команды, которые начинаются с [open_menu]
-                            .findFirst() // Берём первую подходящую команду
-                            .ifPresent(command -> {
-                                // Извлекаем ключ после [open_menu]
+                            List<ItemStack> itemStacks = new ArrayList<>();
+                            for (MenuButton btn : menu.getButtons()) {
+                                if (btn.getCommand().contains("[sell_zone]")) {
+                                    ItemStack item = topInventory.getItem(btn.getSlotButton());
+                                    if (item != null) {
+                                        itemStacks.add(item);
+                                    }
+                                }
+                            }
+
+                            double count = SellZone.getCountPlayer(player.getUniqueId());
+                            if (count > 0) {
+                                Main.getInstance().economy.depositPlayer(player, count);
+                                for (int i = 0; i < topInventory.getSize(); i++) {
+                                    ItemStack itemStack = topInventory.getItem(i);
+                                    if (itemStack != null) {
+                                        Map<Material, Double> materialPriceMap = Main.getInstance().getMaterialPrise(Main.getInstance().getItemPrise());
+                                        int finalI = i;
+
+                                        menu.getButtons().forEach(btn -> {
+                                            if (btn.getSlotButton() == finalI && btn.getCommand().contains("[sell_zone]")) {
+                                                if (materialPriceMap.containsKey(itemStack.getType())) {
+                                                    topInventory.setItem(finalI, null);
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                                player.sendMessage(hex(Main.getCfg().getString("completeSaleMessage").replace("%sum%", String.valueOf(count))));
+                            } else {
+                                player.sendMessage(hex(Main.getCfg().getString("noItemsToSellMessage", "У вас нет предметов для продажи")));
+                                break;
+                            }
+                            break;
+
+                        case "[sell_item]":
+                            Material materialSell = button.getMaterialButton();
+                            Double itemPrice = Main.getInstance().getPriseItem(materialSell.name().toLowerCase());
+
+                            if (itemPrice != null) {
+                                PlayerInventory inventory = player.getInventory();
+                                double totalSum = 0d;
+
+                                for (int slot = 0; slot < 36; slot++) {
+                                    ItemStack item = inventory.getItem(slot);
+                                    if (item != null && item.getType() == materialSell) {
+                                        double itemTotalPrice = itemPrice * item.getAmount();
+                                        Main.getInstance().economy.depositPlayer(player, itemTotalPrice);
+                                        totalSum += itemTotalPrice;
+                                        player.getInventory().setItem(slot, null);
+                                    }
+                                }
+                                player.sendMessage(hex("&eВы продали предметы на сумму: &a" + totalSum));
+                            }
+                            break;
+
+                        case "[auto_buy]":
+                            event.setCancelled(true);
+                            UUID playerId = player.getUniqueId();
+                            String materialName = button.getMaterialButton().name();
+
+                            AutoBuy.toggleAutoBuyItem(playerId, materialName);
+                            updateLoreButton(button, topInventory, SellZone.getCountPlayerString(playerId, 0), player);
+                            break;
+
+                        default:
+                            if (command.startsWith("[open_menu]")) {
+                                event.setCancelled(true);
                                 String key = command.substring("[open_menu]".length()).trim();
                                 Main.getInstance().getMenuManager().openMenu(player, key);
-                            });
-                } else if (button.getCommand().contains("[sell_item]")) {
-                    Material materialSell = button.getMaterialButton();
-                    Double count = Main.getInstance().getPriseItem(materialSell.name().toLowerCase());
-
-
-//                    LOGGER.info("{} {}", count, materialSell);
-                    if(count != null){
-                        PlayerInventory inventory = player.getInventory(); // Получаем инвентарь игрока
-                        double sumCount = 0d;
-                        // Проходим по всем слотам нижнего инвентаря (0-35)
-                        for (int slot = 0; slot < 36; slot++) {
-                            ItemStack item = inventory.getItem(slot);
-                            // Получаем предмет из слота
-//                            LOGGER.info("{}",item);
-                            if (item != null && item.getType() == materialSell) {
-                                double priseItem = count * item.getAmount();
-                                Main.getInstance().economy.depositPlayer(player, priseItem);
-                                sumCount += priseItem;
-                                player.getInventory().setItem(slot, null);
+                            } else {
+                                event.setCancelled(true);
+                                Actions.execute(player, command);
                             }
-                        }
-                        player.sendMessage(hex("&eВы продали на предмета на сумму: &a" + sumCount));
-                    } else {
-//                        LOGGER.info("Данного материала нету в списке продаваемых предметов");
+                            break;
                     }
-
-                } else if (button.getCommand().contains("[auto_buy]")) {
-                    event.setCancelled(true);
-                    UUID playerId = player.getUniqueId();
-
-                    String materialName = button.getMaterialButton().name();
-
-                    AutoBuy.toggleAutoBuyItem(playerId, materialName);
-
-                    updateLoreButton(button, topInventory, SellZone.getCountPlayerString(player.getUniqueId(), 0), player);
                 }
-                else {
-                    event.setCancelled(true);
-                }
-                break;
+                break; // Выходим из цикла, так как слот уже обработан
             }
         }
 
 
-
-        // Если слот является слотом [sell_zone], разрешаем размещение предмета
         event.setCancelled(true); // Отменить стандартное поведение для не [sell_zone] слотов
     }
 

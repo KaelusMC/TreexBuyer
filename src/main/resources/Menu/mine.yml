@@ -1,5 +1,172 @@
 titleMenu: "Ресурсы с шахты"
-commandOpenMenu:
-- 'mine'
+
 permissionOpenMenu: none
 size: 54
+
+
+menuItems:
+  background:
+    material: WHITE_STAINED_GLASS_PANE
+    slot:
+      - 0-2
+      - 7-17
+      - 36-52
+    displayButton: ""
+
+
+  NETHERITE_INGOT:
+    material: NETHERITE_INGOT
+    slot: 18
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+  NETHERITE_SCRAP:
+    material: NETHERITE_SCRAP
+    slot: 19
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+
+  EMERALD:
+    material: EMERALD
+    slot: 20
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+  DIAMOND:
+    material: DIAMOND
+    slot: 21
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+
+  GOLD_INGOT:
+    material: GOLD_INGOT
+    slot: 22
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+  IRON_INGOT:
+    material: IRON_INGOT
+    slot: 23
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+
+
+  REDSTONE:
+    material: REDSTONE
+    slot: 24
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+
+  LAPIS_LAZULI:
+    material: LAPIS_LAZULI
+    slot: 25
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+
+  COAL:
+    material: COAL
+    slot: 26
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+  QUARTZ:
+    material: QUARTZ
+    slot: 27
+    loreButton:
+      - ' &fЦена &a&l$%price% '
+      - ''
+      - ' &7Кликните чтобы переключить авто скупку'
+      - ' &7Сейчас %auto_sell_toggle_state%'
+      - ''
+    command:
+      - '[auto_buy]'
+
+
+
+
+
+
+
+  menuMine:
+    material: NETHERITE_INGOT
+    slot: 2
+    displayButton: "&6■ &fКатегория: &6Ресурсы из шахты &6■"
+    command:
+      - '[open_menu] mine'
+
+  menuMobs:
+    material: COW_SPAWN_EGG
+    slot: 5
+    displayButton: "&6■ &fКатегория: &6Ресурсы с мобов &6■"
+    command:
+      - '[open_menu] mobs'
+
+  back:
+    material: ARROW
+    slot: 53
+    displayButton: "&6Вернуться"
+    command:
+      - '[open_menu] seller'
+
+
+
+

@@ -25,10 +25,16 @@ public class PriseItemFileCreator {
     private void createDefaultFile(File file) {
         try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             writer.write("# Обычная стоимость предметов\n");
-            writer.write("rotten_flesh: 100\n");
-            writer.write("bone: 150\n");
-            writer.write("iron_ingot: 200\n");
-            writer.write("gold_ingot: 300\n");
+            writer.write("NETHERITE_INGOT: 10000\n");
+            writer.write("NETHERITE_SCRAP: 2000\n");
+            writer.write("EMERALD: 1500\n");
+            writer.write("DIAMOND: 500\n");
+            writer.write("GOLD_INGOT: 200\n");
+            writer.write("IRON_INGOT: 80\n");
+            writer.write("REDSTONE: 15\n");
+            writer.write("LAPIS_LAZULI: 5\n");
+            writer.write("COAL: 8\n");
+            writer.write("QUARTZ: 10\n");
         } catch (IOException e) {
             plugin.getLogger().severe("Не удалось создать файл priseItem.yml");
             e.printStackTrace();

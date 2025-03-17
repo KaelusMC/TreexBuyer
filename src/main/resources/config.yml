@@ -7,8 +7,7 @@ priseItem:
 menu:
   seller:
     path: Menu/seller.yml
-  category:
-    path: Menu/category.yml
+
   mobs:
     path: Menu/mobs.yml
   mine:

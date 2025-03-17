@@ -1,5 +1,6 @@
 package me.jetby.treexbuyer.dataBase;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,15 +16,19 @@ public class DatabaseManager {
 
     public void initDatabase() {
         try {
-            this.connection = DriverManager.getConnection("jdbc:sqlite:data.db");
+            File dbFile = new File("plugins/TreexBuyer/data.db");
+            if (!dbFile.getParentFile().exists()) {
+                dbFile.getParentFile().mkdirs(); // Создаём папку, если её нет
+            }
+            this.connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
             this.createTable();
-            System.out.println("[TreexBuyer] База данных успешно создана");
+            System.out.println("[TreexBuyer] База данных создана в: " + dbFile.getAbsolutePath());
         } catch (SQLException e) {
             e.printStackTrace();
             System.err.println("[TreexBuyer] Ошибка подключения к базе данных: " + e.getMessage());
         }
-
     }
+
 
     private void createTable() {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS player_data (uuid TEXT PRIMARY KEY,data TEXT);";

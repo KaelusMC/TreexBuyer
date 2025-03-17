@@ -1,34 +1,35 @@
 titleMenu: Скупщик
 commandOpenMenu:
-- 'seller'
-- 'sell'
-- 'openseller'
+  - 'seller'
+  - 'buyer'
 permissionOpenMenu: none
 size: 54
 menuItems:
-  buttonSell:
+  zone:
     material: AIR
     slot: 0-40
     displayButton: ' '
     loreButton: []
     command:
       - '[sell_zone]'
-  buttonSell2:
-    material: DIRT
-    slot: 49
+  sell:
+    material: LIME_DYE
+    slot: 53
     displayButton: ' '
     loreButton:
-      - '&fНажмите чтобы сдать все предметы'
-      - '&fПредметов на сумму: %seller_pay%'
+      - ' &fНажмите чтобы сдать все предметы '
+      - ' &fПредметов на сумму: &6$%seller_pay% '
+      - ''
     command:
       - '[sell_all]'
   category:
-    material: APPLE
+    material: MINECART
     slot: 45
     displayButton: ' '
     loreButton:
+      - ' &6Настройка авто-скупки '
       - ' '
     command:
-      - '[open_menu] category'
+      - '[open_menu] mine'
 
 

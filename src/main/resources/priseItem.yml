@@ -1,5 +1,12 @@
 # обычная стоимость предметов
-rotten_flesh: 100
-bone: 150
-iron_ingot: 200
-gold_ingot: 300
+NETHERITE_INGOT: 10000
+NETHERITE_SCRAP: 2000
+EMERALD: 1500
+DIAMOND: 500
+GOLD_INGOT: 200
+IRON_INGOT: 80
+REDSTONE: 15
+LAPIS_LAZULI: 5
+COAL: 8
+QUARTZ: 10
+
