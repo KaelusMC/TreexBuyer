@@ -1,0 +1,22 @@
+titleMenu: "Ресурсы с мобов"
+commandOpenMenu:
+  - 'openmob'
+permissionOpenMenu: none
+size: 54
+menuItems:
+  testpro:
+    material: APPLE
+    slot: 10
+    displayButton: ' '
+    loreButton:
+      - ' '
+    command:
+      - '[auto_buy]'
+  testpro2:
+    material: BONE
+    slot: 11
+    displayButton: ' '
+    loreButton:
+      - ' '
+    command:
+      - '[auto_buy]'

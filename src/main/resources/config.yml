@@ -1,0 +1,24 @@
+# Версия бета-1.0-beta
+
+#########################[Скупщик]#######################
+priseItem:
+  path: priseItem.yml
+
+menu:
+  seller:
+    path: Menu/seller.yml
+  category:
+    path: Menu/category.yml
+  mobs:
+    path: Menu/mobs.yml
+  mine:
+    path: Menu/mine.yml
+
+
+autoBuyDelay: 10 # В секундах. Как часто будет срабатывать АвтоСкупка
+autoBuy:
+  enable: "&aВключён"
+  disable: "&cВыключен"
+#########################[Сообщения]#######################
+completeSaleMessage: 'Вы успешно продали все предметы на сумму %sum%'
+noItemsToSellMessage: 'У вас нет предметов для продажи'

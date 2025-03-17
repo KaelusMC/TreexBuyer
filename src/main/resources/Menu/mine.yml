@@ -1,0 +1,5 @@
+titleMenu: "Ресурсы с шахты"
+commandOpenMenu:
+- 'mine'
+permissionOpenMenu: none
+size: 54

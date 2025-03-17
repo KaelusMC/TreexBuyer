@@ -1,0 +1,34 @@
+titleMenu: Скупщик
+commandOpenMenu:
+- 'seller'
+- 'sell'
+- 'openseller'
+permissionOpenMenu: none
+size: 54
+menuItems:
+  buttonSell:
+    material: AIR
+    slot: 0-40
+    displayButton: ' '
+    loreButton: []
+    command:
+      - '[sell_zone]'
+  buttonSell2:
+    material: DIRT
+    slot: 49
+    displayButton: ' '
+    loreButton:
+      - '&fНажмите чтобы сдать все предметы'
+      - '&fПредметов на сумму: %seller_pay%'
+    command:
+      - '[sell_all]'
+  category:
+    material: APPLE
+    slot: 45
+    displayButton: ' '
+    loreButton:
+      - ' '
+    command:
+      - '[open_menu] category'
+
+
