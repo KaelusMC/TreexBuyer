@@ -1,4 +1,4 @@
-package me.jetby.treexbuyer.buttonCommand;
+package me.jetby.treexbuyer.menu;
 
 import me.jetby.treexbuyer.Main;
 import org.bukkit.Material;
@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static org.bukkit.Bukkit.getLogger;

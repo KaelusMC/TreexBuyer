@@ -1,7 +1,7 @@
 package me.jetby.treexbuyer.commands;
 
-import me.jetby.treexbuyer.loader.MenuLoader;
-import me.jetby.treexbuyer.menuManager.MenuManager;
+import me.jetby.treexbuyer.configurations.MenuLoader;
+import me.jetby.treexbuyer.menu.MenuManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;

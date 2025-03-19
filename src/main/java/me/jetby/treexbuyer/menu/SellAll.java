@@ -1,7 +1,6 @@
-package me.jetby.treexbuyer.buttonCommand;
+package me.jetby.treexbuyer.menu;
 
 import me.jetby.treexbuyer.Main;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

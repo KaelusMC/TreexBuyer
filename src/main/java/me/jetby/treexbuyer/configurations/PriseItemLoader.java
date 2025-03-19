@@ -1,4 +1,4 @@
-package me.jetby.treexbuyer.loader;
+package me.jetby.treexbuyer.configurations;
 
 import me.jetby.treexbuyer.Main;
 import org.bukkit.configuration.file.FileConfiguration;

@@ -1,4 +1,4 @@
-package me.jetby.treexbuyer.commands;
+package me.jetby.treexbuyer.menu;
 
 import me.jetby.treexbuyer.Main;
 import org.bukkit.command.Command;
