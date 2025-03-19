@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.jetby.treexbuyer.Main.getCfg;
+import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.utils.Hex.hex;
 import static me.jetby.treexbuyer.utils.Hex.setPlaceholders;
 
@@ -143,9 +143,9 @@ public class MenuListener implements Listener {
                                         });
                                     }
                                 }
-                                player.sendMessage(hex(Main.getCfg().getString("completeSaleMessage").replace("%sum%", String.valueOf(count))));
+                                player.sendMessage(hex(CFG().getString("completeSaleMessage").replace("%sum%", String.valueOf(count))));
                             } else {
-                                player.sendMessage(hex(Main.getCfg().getString("noItemsToSellMessage", "У вас нет предметов для продажи")));
+                                player.sendMessage(hex(CFG().getString("noItemsToSellMessage", "У вас нет предметов для продажи")));
                                 break;
                             }
                             break;
@@ -261,6 +261,8 @@ public class MenuListener implements Listener {
 
 
         for (MenuButton btn : menu.getButtons()) {
+            List<ItemStack> itemStacks = new ArrayList<>();
+            SellZone.checkItem(itemStacks, Main.getInstance().getItemPrise(), player);
 
 
             updateLoreButton(btn, topInventory, SellZone.getCountPlayerString(player.getUniqueId(), 0), player);
@@ -314,7 +316,7 @@ public class MenuListener implements Listener {
                     meta.setLore(button.getLoreButton().stream()
                             .map(s -> hex(setPlaceholders(player, s)))
                             .map(s -> s.replace("%price%", String.valueOf(price)))
-                            .map(s -> s.replace("%auto_sell_toggle_state%", hex(getCfg().getString("autoBuy.enable", "&aВключён"))))
+                            .map(s -> s.replace("%auto_sell_toggle_state%", hex(CFG().getString("autoBuy.enable", "&aВключён"))))
                             .map(s -> s.replace("%seller_pay%", count)).toList());
 
                 } else {
@@ -323,7 +325,7 @@ public class MenuListener implements Listener {
                     meta.setLore(button.getLoreButton().stream()
                             .map(s -> hex(setPlaceholders(player, s)))
                             .map(s -> s.replace("%price%", String.valueOf(price)))
-                            .map(s -> s.replace("%auto_sell_toggle_state%", hex(getCfg().getString("autoBuy.disable", "&cВыключён"))))
+                            .map(s -> s.replace("%auto_sell_toggle_state%", hex(CFG().getString("autoBuy.disable", "&cВыключён"))))
                             .map(s -> s.replace("%seller_pay%", count)).toList());
 
                 }

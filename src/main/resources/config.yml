@@ -1,6 +1,9 @@
 # Версия бета-1.0-beta
 
 #########################[Скупщик]#######################
+
+logger: false
+
 priseItem:
   path: priseItem.yml
 

@@ -1,14 +1,15 @@
 package me.jetby.treexbuyer;
 
+import me.jetby.treexbuyer.commands.PluginCommands;
+import me.jetby.treexbuyer.commands.PluginCompleter;
+import me.jetby.treexbuyer.configurations.Config;
 import me.jetby.treexbuyer.menu.Menu;
 import me.jetby.treexbuyer.menuListener.MenuListener;
 import me.jetby.treexbuyer.menuManager.MenuManager;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
-import me.jetby.treexbuyer.commands.Seller;
-import me.jetby.treexbuyer.createDefaultYml.ConfigManager;
-import me.jetby.treexbuyer.createDefaultYml.PriseItemFileCreator;
+import me.jetby.treexbuyer.commands.MenusCommands;
+import me.jetby.treexbuyer.configurations.PriceItemCfg;
 import me.jetby.treexbuyer.dataBase.DatabaseManager;
-import me.jetby.treexbuyer.events.Listeners;
 import me.jetby.treexbuyer.loader.MenuLoader;
 import me.jetby.treexbuyer.loader.PriseItemLoader;
 import me.jetby.treexbuyer.utils.ASellerPlaceholder;
@@ -21,7 +22,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -31,12 +31,12 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.utils.Hex.hex;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
     public Economy economy;
-    private static FileConfiguration cfg;
     private ASellerPlaceholder placeholderExpansion;
     private MenuManager menuManager;
     private Map<String, Double> itemPrise;
@@ -50,28 +50,33 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        vaultCheck(); // проверка и подключение Vault
+        checkDepends(); // проверка и подключение Vault
 
-        saveDefaultConfig();
-        cfg = getConfig();
-        ConfigManager configManager = new ConfigManager();
-        configManager.loadYamlFiles(this);
-        new PriseItemFileCreator(this);
 
-        MenuLoader.loadMenus(cfg, getDataFolder()); // загрузчик
+
+        Config config = new Config();
+        config.loadYamlFile(this);
+
+
+
+        PriceItemCfg priseItemCfg= new PriceItemCfg();
+        priseItemCfg.loadYamlFile(this);
+
+        MenuLoader.loadMenus(CFG(), getDataFolder()); // загрузчик
         menuCheck(); // вывод загруженных меню
 
         menuManager = new MenuManager(MenuLoader.getListMenu());
         getServer().getPluginManager().registerEvents(new MenuListener(), this);
-        getServer().getPluginManager().registerEvents(new Listeners(), this);
 
         this.databaseManager = new DatabaseManager();
         databaseManager.initDatabase();
 
 
         createCommand(); // создаём все команды
+        getCommand("treexbuyer").setExecutor(new PluginCommands());
+        getCommand("treexbuyer").setTabCompleter(new PluginCompleter());
 
-        String path = cfg.getString("priseItem.path");
+        String path = CFG().getString("priseItem.path");
         File itemFile = new File(getDataFolder(), path);
         itemPrise = PriseItemLoader.loadItemValuesFromFile(itemFile);
 
@@ -79,7 +84,7 @@ public final class Main extends JavaPlugin {
 
 
 
-        new Metrics(this, 23115);
+        new Metrics(this, 25141);
     }
 
     @Override
@@ -90,24 +95,23 @@ public final class Main extends JavaPlugin {
         if (databaseManager != null) {
             databaseManager.closeConnection();
         }
-        System.out.println("[TreexBuyer] Плагин отключён.");
+        getLogger().warning("[TreexBuyer] Плагин отключён.");
     }
 
-    private void vaultCheck(){
+    private void checkDepends(){
         if (!setupEconomy()) {
             getLogger().info("Vault не найден!");
         }
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            placeholderExpansion = new ASellerPlaceholder(this);
-            placeholderExpansion.register();
-        } else {
-            getLogger().warning("PlaceholderAPI не обнаружен! Некоторые функции могут быть недоступны.");
-        }
+//        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+//            placeholderExpansion = new ASellerPlaceholder(this);
+//            placeholderExpansion.register();
+//        } else {
+//            getLogger().warning("PlaceholderAPI не обнаружен! Некоторые функции могут быть недоступны.");
+//        }
     }
     public void menuCheck(){
         MenuLoader.getListMenu().forEach((key, vault) -> {
             getLogger().info("Меню: " + key + " загружен");
-            getLogger().info("Имя: " + vault.getTitleMenu());
             vault.getButtons().forEach(edit -> {
 
             });
@@ -131,7 +135,7 @@ public final class Main extends JavaPlugin {
             commandNames.addAll(item.getCommandOpenMenu());
         });
         for (String commandName : commandNames) {
-            registerCommand(commandName, new Seller());
+            registerCommand(commandName, new MenusCommands());
         }
     }
     private void registerCommand(String commandName, CommandExecutor executor) {
@@ -155,9 +159,6 @@ public final class Main extends JavaPlugin {
         }
     }
 
-    public static FileConfiguration getCfg() {
-        return cfg;
-    }
 
     public MenuManager getMenuManager() {
         return menuManager;
@@ -217,10 +218,10 @@ public final class Main extends JavaPlugin {
                 }
 
                 if (sumCount!=0d) {
-                    player.sendMessage(hex(cfg.getString("completeSaleMessage", "&aВы успешно продали все предметы на сумму &f%sum%").replace("%sum%", String.valueOf(sumCount))));
+                    player.sendMessage(hex(CFG().getString("completeSaleMessage", "&aВы успешно продали все предметы на сумму &f%sum%").replace("%sum%", String.valueOf(sumCount))));
                 }
 
             }
-        }, 0L, cfg.getInt("autoBuyDelay", 60)); // Задержка перед первым запуском (0 тиков), периодичность (20 тиков = 1 секунда)
+        }, 0L, CFG().getInt("autoBuyDelay", 60));
     }
 }

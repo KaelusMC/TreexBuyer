@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import static me.jetby.treexbuyer.configurations.Config.CFG;
+import static org.bukkit.Bukkit.getLogger;
+
 public class SellZone {
 
     private static Map<UUID, Double> countPlayer = new HashMap<>();
@@ -25,12 +28,14 @@ public class SellZone {
                 Material material = Material.valueOf(key.toUpperCase());
                 materialPrise.put(material, vault);
             } catch (IllegalArgumentException e) {
-                Main.getInstance().getLogger().warning("[SellZone] Неизвестный материал: " + key);
+                if (CFG().getBoolean("logger")) {
+                    getLogger().warning("[SellZone] Неизвестный материал: " + key);
+                }
             }
         });
-
-//        itemStacks.forEach(item -> Main.getInstance().getLogger().info(item.getType() + " : " + item.getAmount()));
-
+        if (CFG().getBoolean("logger")) {
+            itemStacks.forEach(item -> Main.getInstance().getLogger().info(item.getType() + " : " + item.getAmount()));
+        }
         double sum = 0d;
         for (ItemStack itemStack : itemStacks) {
             Double price = materialPrise.get(itemStack.getType());

@@ -1,8 +1,12 @@
 package me.jetby.treexbuyer.autoBuy;
 
 import me.jetby.treexbuyer.Main;
+import org.bukkit.Bukkit;
 
 import java.util.*;
+
+import static me.jetby.treexbuyer.configurations.Config.CFG;
+import static org.bukkit.Bukkit.getLogger;
 
 public class AutoBuy {
 
@@ -12,10 +16,14 @@ public class AutoBuy {
     public static void checkPlayer(UUID uuid) {
         if (Main.getInstance().getDatabaseManager().recordExists(uuid.toString())) {
             autoBuyPlayers.put(uuid, Main.getInstance().getDatabaseManager().getPlayerData(uuid.toString()));
-            System.out.println("Данные игрока загружены из базы данных.");
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("Данные игрока загружены из базы данных.");
+            }
         } else {
             autoBuyPlayers.put(uuid, new ArrayList<>());
-            System.out.println("Игрок не найден в базе данных. Инициализирован пустой список.");
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("Игрок не найден в базе данных. Инициализирован пустой список.");
+            }
         }
     }
 
@@ -28,10 +36,14 @@ public class AutoBuy {
 
         if (autoBuyList.contains(item)) {
             autoBuyList.remove(item);
-            System.out.println("Предмет удален из списка автоскупки: " + item);
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("Предмет удален из списка автоскупки: " + item);
+            }
         } else {
             autoBuyList.add(item);
-            System.out.println("Предмет добавлен в список автоскупки: " + item);
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("Предмет добавлен в список автоскупки: " + item);
+            }
         }
 
         Main.getInstance().getDatabaseManager().addOrUpdatePlayerData(uuid.toString(), autoBuyList);

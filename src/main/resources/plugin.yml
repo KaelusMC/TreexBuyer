@@ -5,5 +5,8 @@ api-version: '1.16'
 authors: [MrJetby]
 website: https://treexstudio.site
 commands:
-  dummyCommand:
-    description: "A placeholder command"
+  treexbuyer:
+    aliases:
+      - tbuyer
+      - xbuyer
+      - tb

@@ -33,6 +33,7 @@ public class ASellerPlaceholder extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
 
+        // НА БУДУЩЕЕ
         if (identifier.startsWith("pay")) {
 
 

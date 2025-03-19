@@ -1,6 +1,7 @@
 package me.jetby.treexbuyer.menuManager;
 
 import me.jetby.treexbuyer.Main;
+import me.jetby.treexbuyer.buttonCommand.SellZone;
 import me.jetby.treexbuyer.menu.Menu;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
 import me.jetby.treexbuyer.utils.Hex;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.jetby.treexbuyer.Main.getCfg;
+import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.utils.Hex.hex;
 import static me.jetby.treexbuyer.utils.Hex.setPlaceholders;
 
@@ -50,20 +51,19 @@ public class MenuManager {
                     meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                     meta.setLore(entry.getLoreButton().stream()
                             .map(s -> Hex.hex(setPlaceholders(player, s)))
-                            .map(s -> s.replace("%auto_sell_toggle_state%", hex(getCfg().getString("autoBuy.enable", "&aВключён"))))
+                            .map(s -> s.replace("%auto_sell_toggle_state%", hex(CFG().getString("autoBuy.enable", "&aВключён"))))
                             .map(s -> s.replace("%seller_pay%", "0")).toList());
 
                 } else {
                     meta.setLore(entry.getLoreButton().stream()
                             .map(s -> Hex.hex(setPlaceholders(player, s)))
-                            .map(s -> s.replace("%auto_sell_toggle_state%", hex(getCfg().getString("autoBuy.disable", "&cВыключен"))))
+                            .map(s -> s.replace("%auto_sell_toggle_state%", hex(CFG().getString("autoBuy.disable", "&cВыключен"))))
                             .map(s -> s.replace("%seller_pay%", "0")).toList());
 
 
                     meta.removeEnchant(Enchantment.LUCK);
                     meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
                 }
-
 
 
 

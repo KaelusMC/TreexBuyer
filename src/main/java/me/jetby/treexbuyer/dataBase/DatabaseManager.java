@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static me.jetby.treexbuyer.configurations.Config.CFG;
+import static org.bukkit.Bukkit.getLogger;
+
 public class DatabaseManager {
     private static final String DATABASE_NAME = "data.db";
     private static final String TABLE_NAME = "player_data";
@@ -20,12 +23,20 @@ public class DatabaseManager {
             if (!dbFile.getParentFile().exists()) {
                 dbFile.getParentFile().mkdirs();
             }
-            this.connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
-            this.createTable();
-            System.out.println("[TreexBuyer] База данных создана в: " + dbFile.getAbsolutePath());
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
+            createTable();
+
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] База данных создана в: " + dbFile.getAbsolutePath());
+            }
+
+
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("[TreexBuyer] Ошибка подключения к базе данных: " + e.getMessage());
+
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Ошибка подключения к базе данных: " + e.getMessage());
+            }
         }
     }
 
@@ -33,12 +44,16 @@ public class DatabaseManager {
     private void createTable() {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS player_data (uuid TEXT PRIMARY KEY,data TEXT);";
 
-        try (PreparedStatement statement = this.connection.prepareStatement(createTableSQL)) {
+        try (PreparedStatement statement = connection.prepareStatement(createTableSQL)) {
             statement.execute();
-            System.out.println("[TreexBuyer] Таблица player_data успешно создана или уже существует.");
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Таблица player_data успешно создана или уже существует.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("[TreexBuyer] Ошибка при создании таблицы: " + e.getMessage());
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Ошибка при создании таблицы: " + e.getMessage());
+            }
         }
 
     }
@@ -47,15 +62,22 @@ public class DatabaseManager {
         String data = String.join(",", materials);
         String upsertSQL = "INSERT INTO player_data (uuid, data) VALUES (?, ?) ON CONFLICT(uuid) DO UPDATE SET data = ?;";
 
-        try (PreparedStatement statement = this.connection.prepareStatement(upsertSQL)) {
+        try (PreparedStatement statement = connection.prepareStatement(upsertSQL)) {
             statement.setString(1, uuid);
             statement.setString(2, data);
             statement.setString(3, data);
             statement.executeUpdate();
-            System.out.println("[TreexBuyer] Данные для UUID=" + uuid + " были успешно добавлены или обновлены.");
+
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Данные для UUID=" + uuid + " были успешно добавлены или обновлены.");
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("[TreexBuyer] Ошибка при добавлении или обновлении данных: " + e.getMessage());
+
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Ошибка при добавлении или обновлении данных: " + e.getMessage());
+            }
         }
 
     }
@@ -63,13 +85,16 @@ public class DatabaseManager {
     public boolean recordExists(String uuid) {
         String selectSQL = "SELECT 1 FROM player_data WHERE uuid = ?;";
 
-        try (PreparedStatement statement = this.connection.prepareStatement(selectSQL)) {
+        try (PreparedStatement statement = connection.prepareStatement(selectSQL)) {
             statement.setString(1, uuid);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("[TreexBuyer] Ошибка при проверке записи: " + e.getMessage());
+
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Ошибка при проверке записи: " + e.getMessage());
+            }
             return false;
         }
     }
@@ -77,7 +102,7 @@ public class DatabaseManager {
     public List<String> getPlayerData(String uuid) {
         String selectSQL = "SELECT data FROM player_data WHERE uuid = ?;";
 
-        try (PreparedStatement statement = this.connection.prepareStatement(selectSQL)) {
+        try (PreparedStatement statement = connection.prepareStatement(selectSQL)) {
             statement.setString(1, uuid);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -86,7 +111,9 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("[TreexBuyer] Ошибка при получении данных: " + e.getMessage());
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Ошибка при получении данных: " + e.getMessage());
+            }
         }
 
         return new ArrayList();
@@ -94,9 +121,12 @@ public class DatabaseManager {
 
     public void closeConnection() {
         try {
-            if (this.connection != null && !this.connection.isClosed()) {
-                this.connection.close();
-                System.out.println("[TreexBuyer] Подключение к базе данных закрыто.");
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+
+                if (CFG().getBoolean("logger")) {
+                    getLogger().info("[TreexBuyer] Подключение к базе данных закрыто.");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -105,6 +135,6 @@ public class DatabaseManager {
     }
 
     public Connection getConnection() {
-        return this.connection;
+        return connection;
     }
 }

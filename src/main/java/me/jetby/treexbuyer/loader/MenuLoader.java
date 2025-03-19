@@ -33,6 +33,7 @@ public class MenuLoader {
         FileConfiguration menuConfig = YamlConfiguration.loadConfiguration(menuFile);
 
 
+
         String titleMenu = menuConfig.getString("titleMenu");
         int size = menuConfig.getInt("size");
         List<String> commandOpenMenu = menuConfig.getStringList("commandOpenMenu");
