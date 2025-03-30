@@ -4,6 +4,10 @@ main: me.jetby.treexbuyer.Main
 api-version: '1.16'
 authors: [MrJetby]
 website: https://treexstudio.site
+depend:
+  - Vault
+softdepend:
+  - PlaceholderAPI
 commands:
   treexbuyer:
     aliases:

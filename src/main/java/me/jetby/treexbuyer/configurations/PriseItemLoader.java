@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class PriseItemLoader {
 
-    public static Map<String, Double> loadItemValuesFromFile(File file) {
-        Map<String, Double> itemValues = new HashMap<>();
+    public static Map<String, ItemData> loadItemValuesFromFile(File file) {
+        Map<String, ItemData> itemValues = new HashMap<>();
         if (!file.exists()) {
             Main.getInstance().getLogger().warning("Файл " + file.getName() + " не найден!");
             return itemValues;
@@ -19,12 +19,15 @@ public class PriseItemLoader {
 
         FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(file);
 
-
         for (String key : fileConfig.getKeys(false)) {
-            double value = fileConfig.getDouble(key);
-            itemValues.put(key, value);
+            double price = fileConfig.getDouble(key + ".price", 0);
+            int addScores = fileConfig.getInt(key + ".add-scores", 0);
+            itemValues.put(key, new ItemData(price, addScores));
         }
 
         return itemValues;
+    }
+
+    public record ItemData(double price, int addScores) {
     }
 }

@@ -42,20 +42,61 @@ public class DatabaseManager {
 
 
     private void createTable() {
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS player_data (uuid TEXT PRIMARY KEY,data TEXT);";
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS player_data (uuid TEXT PRIMARY KEY, data TEXT);";
+        String createScoresTableSQL = "CREATE TABLE IF NOT EXISTS player_scores (uuid TEXT PRIMARY KEY, scores INTEGER);";
 
-        try (PreparedStatement statement = connection.prepareStatement(createTableSQL)) {
+        try (PreparedStatement statement = connection.prepareStatement(createTableSQL);
+             PreparedStatement scoresStatement = connection.prepareStatement(createScoresTableSQL)) {
             statement.execute();
+            scoresStatement.execute();
             if (CFG().getBoolean("logger")) {
-                getLogger().info("[TreexBuyer] Таблица player_data успешно создана или уже существует.");
+                getLogger().info("[TreexBuyer] Таблицы player_data и player_scores успешно созданы или уже существуют.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
             if (CFG().getBoolean("logger")) {
-                getLogger().info("[TreexBuyer] Ошибка при создании таблицы: " + e.getMessage());
+                getLogger().info("[TreexBuyer] Ошибка при создании таблиц: " + e.getMessage());
+            }
+        }
+    }
+    public void addOrUpdatePlayerScores(String uuid, double scores) {
+        String upsertSQL = "INSERT INTO player_scores (uuid, scores) VALUES (?, ?) ON CONFLICT(uuid) DO UPDATE SET scores = ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(upsertSQL)) {
+            statement.setString(1, uuid);
+            statement.setDouble(2, scores);
+            statement.setDouble(3, scores);
+            statement.executeUpdate();
+
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Очки для UUID=" + uuid + " были успешно добавлены/обновлены.");
+                getLogger().info("[TreexBuyer] Бустер для UUID=" + uuid + " теперь: " + scores);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Ошибка при добавлении или обновлении очков: " + e.getMessage());
+            }
+        }
+    }
+
+    public double getPlayerScores(String uuid) {
+        String selectSQL = "SELECT scores FROM player_scores WHERE uuid = ?;";
+
+        try (PreparedStatement statement = connection.prepareStatement(selectSQL)) {
+            statement.setString(1, uuid);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble("scores");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] Ошибка при получении очков: " + e.getMessage());
             }
         }
 
+        return 0; // Если очков нет, возвращаем 0
     }
 
     public void addOrUpdatePlayerData(String uuid, List<String> materials) {

@@ -27,6 +27,8 @@ menuItems:
     slot: 45
     displayButton: ' '
     loreButton:
+      - ' &fТекующий коэффицент: &6%coefficient%'
+      - ' '
       - ' &6Настройка авто-скупки '
       - ' '
     command:

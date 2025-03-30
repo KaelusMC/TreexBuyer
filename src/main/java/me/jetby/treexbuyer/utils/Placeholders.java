@@ -5,11 +5,11 @@ import me.jetby.treexbuyer.Main;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ASellerPlaceholder extends PlaceholderExpansion {
+public class Placeholders extends PlaceholderExpansion {
 
     private final Main plugin;
 
-    public ASellerPlaceholder(Main plugin) {
+    public Placeholders(Main plugin) {
         this.plugin = plugin;
     }
 

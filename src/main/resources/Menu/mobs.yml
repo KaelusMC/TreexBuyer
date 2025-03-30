@@ -17,7 +17,8 @@ menuItems:
     material: BONE
     slot: 18
     loreButton:
-      - ' &fЦена &a&l$%price% '
+      - ' &fИзначальная Цена &a&l$%price% '
+      - ' &fТекущая Цена &c&l$%price_with_coefficient%'
       - ''
       - ' &7Кликните чтобы переключить авто скупку'
       - ' &7Сейчас %auto_sell_toggle_state%'
@@ -30,7 +31,8 @@ menuItems:
     material: LEATHER
     slot: 19
     loreButton:
-      - ' &fЦена &a&l$%price% '
+      - ' &fИзначальная Цена &a&l$%price% '
+      - ' &fТекущая Цена &c&l$%price_with_coefficient%'
       - ''
       - ' &7Кликните чтобы переключить авто скупку'
       - ' &7Сейчас %auto_sell_toggle_state%'
@@ -42,7 +44,8 @@ menuItems:
     material: STRING
     slot: 20
     loreButton:
-      - ' &fЦена &a&l$%price% '
+      - ' &fИзначальная Цена &a&l$%price% '
+      - ' &fТекущая Цена &c&l$%price_with_coefficient%'
       - ''
       - ' &7Кликните чтобы переключить авто скупку'
       - ' &7Сейчас %auto_sell_toggle_state%'
@@ -55,7 +58,8 @@ menuItems:
     material: SPIDER_EYE
     slot: 21
     loreButton:
-      - ' &fЦена &a&l$%price% '
+      - ' &fИзначальная Цена &a&l$%price% '
+      - ' &fТекущая Цена &c&l$%price_with_coefficient%'
       - ''
       - ' &7Кликните чтобы переключить авто скупку'
       - ' &7Сейчас %auto_sell_toggle_state%'

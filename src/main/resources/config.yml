@@ -1,6 +1,3 @@
-# Версия бета-1.0-beta
-
-#########################[Скупщик]#######################
 
 logger: false
 
@@ -24,3 +21,19 @@ autoBuy:
 #########################[Сообщения]#######################
 completeSaleMessage: 'Вы успешно продали все предметы на сумму %sum%'
 noItemsToSellMessage: 'У вас нет предметов для продажи'
+
+
+
+# за каждые 100 очков игрок будет получать +0.1 к коэффициенту
+score-to-multiplier-ratio:
+  scores: 100
+  coefficient: 0.1
+
+# максимальный коэффициент (без учёта донатных бустов)
+max-legal-coefficient: 3
+default-coefficient: 1
+booster:
+  donat-1: # имя (может быть любым)
+    permission: 'buyer.boost.donat1' # (пермишен по которому будет определяться наличие буста)
+    external-coefficient: 0.5
+

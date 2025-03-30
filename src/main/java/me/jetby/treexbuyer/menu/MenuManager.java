@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerCoefficient;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.utils.Hex.hex;
 import static me.jetby.treexbuyer.utils.Hex.setPlaceholders;
@@ -33,6 +34,7 @@ public class MenuManager {
         }
 
         Inventory inventory = Bukkit.createInventory(menu, menu.getSize(), menu.getTitleMenu());
+        double coefficient = getPlayerCoefficient(player);
 
         menu.getButtons().forEach(entry -> {
             ItemStack itemStack = new ItemStack((entry.getMaterialButton()));
@@ -50,12 +52,14 @@ public class MenuManager {
                     meta.setLore(entry.getLoreButton().stream()
                             .map(s -> Hex.hex(setPlaceholders(player, s)))
                             .map(s -> s.replace("%auto_sell_toggle_state%", hex(CFG().getString("autoBuy.enable", "&aВключён"))))
+                            .map(s -> s.replace("%coefficient%", String.valueOf(coefficient)))
                             .map(s -> s.replace("%seller_pay%", "0")).toList());
 
                 } else {
                     meta.setLore(entry.getLoreButton().stream()
                             .map(s -> Hex.hex(setPlaceholders(player, s)))
                             .map(s -> s.replace("%auto_sell_toggle_state%", hex(CFG().getString("autoBuy.disable", "&cВыключен"))))
+                            .map(s -> s.replace("%coefficient%", String.valueOf(coefficient)))
                             .map(s -> s.replace("%seller_pay%", "0")).toList());
 
 

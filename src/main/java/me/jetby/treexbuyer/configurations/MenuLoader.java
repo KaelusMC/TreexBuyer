@@ -1,5 +1,6 @@
 package me.jetby.treexbuyer.configurations;
 
+import me.jetby.treexbuyer.Main;
 import me.jetby.treexbuyer.menu.Menu;
 import me.jetby.treexbuyer.menu.MenuButton;
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ public class MenuLoader {
 
     public static void loadMenus(FileConfiguration config, File dataFolder) {
 
+
         for (String menuId : config.getConfigurationSection("menu").getKeys(false)) {
             String filePath = config.getString("menu." + menuId + ".path");
             File menuFile = new File(dataFolder, filePath);
@@ -23,7 +25,8 @@ public class MenuLoader {
             if (menuFile.exists()) {
                 loadMenuFromFile(menuId, menuFile);
             } else {
-                System.out.println("Menu file not found: " + menuFile.getPath());
+                Main.getInstance().getDataFolder().mkdirs();
+                Main.getInstance().saveResource("Menu/"+menuId+".yml", true);
             }
         }
     }

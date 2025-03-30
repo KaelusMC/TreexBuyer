@@ -4,6 +4,7 @@ import me.jetby.treexbuyer.Main;
 import me.jetby.treexbuyer.configurations.Config;
 import me.jetby.treexbuyer.configurations.PriceItemCfg;
 import me.jetby.treexbuyer.configurations.MenuLoader;
+import me.jetby.treexbuyer.dataBase.DatabaseManager;
 import me.jetby.treexbuyer.menu.MenuManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -12,10 +13,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import static me.jetby.treexbuyer.boost.CoefficientManager.*;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.utils.Hex.hex;
 
 public class PluginCommands implements CommandExecutor {
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
 
@@ -29,9 +32,13 @@ public class PluginCommands implements CommandExecutor {
             }
 
             if (sender instanceof Player player) {
-                player.sendMessage(hex("&aНе пон."));
+                player.sendMessage(hex("&b/tbuyer reload"));
+                player.sendMessage(hex("&b/tbuyer open <id> <ник>"));
+                player.sendMessage(hex("&b/tbuyer boost <ник> <кол-во>"));
             } else {
-                sender.sendMessage("хз.");
+                sender.sendMessage(hex("/tbuyer reload"));
+                sender.sendMessage(hex("/tbuyer open <id> <ник>"));
+                sender.sendMessage(hex("/tbuyer boost <ник> <кол-во>"));
             }
 
             return true;
@@ -58,6 +65,43 @@ public class PluginCommands implements CommandExecutor {
                 sender.sendMessage("Успешная перезагрузка.");
             }
 
+
+            return true;
+        }
+
+        if (args[0].equalsIgnoreCase("boost")) {
+            if (!sender.hasPermission("treexbuyer.admin")) {
+                return true;
+            }
+
+
+
+
+                if (args.length<3) {
+                    if (sender instanceof Player playerSender) {
+                        playerSender.sendMessage(hex("&b&lTreexBuyer &7▶ &fИспользование &b/treexbuyer boost <игрок> <кол-во>"));
+                        return true;
+                    } else {
+                            sender.sendMessage("TreexBuyer ▶ Использование /treexbuyer boost <игрок> <кол-во>");
+                    }
+                }
+                Player player = Bukkit.getPlayer(args[1]);
+                if (player!=null) {
+                    if (sender instanceof Player playerSender) {
+                        addPlayerScores(player, Double.parseDouble(df.format(Double.parseDouble(args[2]))));
+                        playerSender.sendMessage(hex("&b&lTreexBuyer &7▶ &fУспешно. Текующий буст игрока "+player.getName()+" составляет x" + getPlayerCoefficient(player)));
+
+                    } else {
+                        addPlayerScores(player, Double.parseDouble(df.format(Double.parseDouble(args[2]))));
+                        sender.sendMessage(hex("TreexBuyer ▶ Успешно. Текующий буст игрока "+player.getName()+" составляет x" + getPlayerCoefficient(player)));
+                    }
+                } else {
+                    if (sender instanceof Player playerSender) {
+                        playerSender.sendMessage(hex("&b&lTreexBuyer &7▶ &cИгрок не найден."));
+                    } else {
+                        sender.sendMessage(hex("TreexBuyer ▶ Игрок не найден."));
+                    }
+            }
 
             return true;
         }

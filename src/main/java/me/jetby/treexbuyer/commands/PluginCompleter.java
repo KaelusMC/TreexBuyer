@@ -18,7 +18,7 @@ public class PluginCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if (sender instanceof Player player) {
-            List<String> commands = List.of("open", "reload");
+            List<String> commands = List.of("open", "boost", "reload");
 
             if (args.length == 1) {
                 String input = args[0].toLowerCase();

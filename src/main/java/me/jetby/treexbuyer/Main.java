@@ -12,7 +12,7 @@ import me.jetby.treexbuyer.configurations.PriceItemCfg;
 import me.jetby.treexbuyer.dataBase.DatabaseManager;
 import me.jetby.treexbuyer.configurations.MenuLoader;
 import me.jetby.treexbuyer.configurations.PriseItemLoader;
-import me.jetby.treexbuyer.utils.ASellerPlaceholder;
+import me.jetby.treexbuyer.utils.Placeholders;
 import me.jetby.treexbuyer.utils.Metrics;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -31,15 +31,17 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static me.jetby.treexbuyer.boost.CoefficientManager.addPlayerScores;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.utils.Hex.hex;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
     public Economy economy;
-    private ASellerPlaceholder placeholderExpansion;
+    private Placeholders placeholderExpansion;
     private MenuManager menuManager;
-    private Map<String, Double> itemPrise;
+    private Map<String, PriseItemLoader.ItemData> itemPrise;
+
 
 
     public static Main getInstance() {
@@ -51,7 +53,6 @@ public final class Main extends JavaPlugin {
         instance = this;
 
         checkDepends(); // проверка и подключение Vault
-
 
 
         Config config = new Config();
@@ -79,6 +80,8 @@ public final class Main extends JavaPlugin {
         String path = CFG().getString("priseItem.path");
         File itemFile = new File(getDataFolder(), path);
         itemPrise = PriseItemLoader.loadItemValuesFromFile(itemFile);
+
+
 
         startAutoBuy();
 
@@ -164,14 +167,12 @@ public final class Main extends JavaPlugin {
         return menuManager;
     }
 
-    public Map<String, Double> getItemPrise() {
-        return itemPrise;
-    }
-    public Map<Material, Double> getMaterialPrise(Map<String, Double> itemPrise){
+
+    public Map<Material, Double> getMaterialPrise(Map<String, PriseItemLoader.ItemData> itemPrise){
         Map<Material, Double> materialCoal = new HashMap<>();
         itemPrise.forEach((key, vault) -> {
             Material material = Material.valueOf(key.toUpperCase());
-            materialCoal.put(material, vault);
+            materialCoal.put(material, vault.price());
         });
         return materialCoal;
     }
@@ -180,13 +181,13 @@ public final class Main extends JavaPlugin {
     }
     private DatabaseManager databaseManager;
 
-    public Double getPriseItem(String material){
-        itemPrise.forEach((key, vault) -> {
-//            Main.getInstance().getLogger().info("Название предмета: " + key + "цена: " + vault);
-        });
+    public PriseItemLoader.ItemData getPriseItem(String material) {
         return itemPrise.get(material);
     }
 
+    public Map<String, PriseItemLoader.ItemData> getItemPrise() {
+        return itemPrise;
+    }
     public void startAutoBuy() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
 
@@ -202,26 +203,38 @@ public final class Main extends JavaPlugin {
                     continue;
                 }
                 double sumCount = 0d;
+                int totalScores = 0;
 
                 for (ItemStack item : player.getInventory().getContents()) {
                     if (item != null && autoBuyList.contains(item.getType().name())) {
-                        Double count = getPriseItem(item.getType().name());
+                        PriseItemLoader.ItemData itemData = getPriseItem(item.getType().name());
 
-                        if (count != null) {
-                            double priseItem = count * item.getAmount();
-                            economy.depositPlayer(player, priseItem);
-                            sumCount += priseItem;
-                            player.getInventory().remove(item);
+                        if (itemData != null) {
+                            double price = itemData.price();
+                            int scores = itemData.addScores(); // Получаем очки из itemPrise.yml
 
+                            if (price > 0d) {
+                                double totalPrice = price * item.getAmount();
+                                economy.depositPlayer(player, totalPrice);
+                                sumCount += totalPrice;
+                                totalScores += scores * item.getAmount(); // Учитываем количество предметов
+                                player.getInventory().remove(item);
+                            }
                         }
                     }
                 }
 
-                if (sumCount!=0d) {
+                if (sumCount > 0d) {
                     player.sendMessage(hex(CFG().getString("completeSaleMessage", "&aВы успешно продали все предметы на сумму &f%sum%").replace("%sum%", String.valueOf(sumCount))));
+                }
+
+                // Добавляем очки игроку, если они есть
+                if (totalScores > 0) {
+                    addPlayerScores(player, totalScores);
+                    player.sendMessage(hex("&bВы также получили &f" + totalScores + " &bочков!"));
                 }
 
             }
         }, 0L, CFG().getInt("autoBuyDelay", 60));
-    }
+}
 }

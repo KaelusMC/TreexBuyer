@@ -1,6 +1,7 @@
 package me.jetby.treexbuyer.menu;
 
 import me.jetby.treexbuyer.Main;
+import me.jetby.treexbuyer.configurations.PriseItemLoader;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,29 +13,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerCoefficient;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static org.bukkit.Bukkit.getLogger;
 
 public class SellZone {
 
     private static Map<UUID, Double> countPlayer = new HashMap<>();
-    public static void checkItem(List<ItemStack> itemStacks, Map<String, Double> prise, Player player) {
+    public static void checkItem(List<ItemStack> itemStacks, Map<String, PriseItemLoader.ItemData> prise, Player player) {
         countPlayer.put(player.getUniqueId(), 0d);
 
         Map<Material, Double> materialPrise = new HashMap<>();
         prise.forEach((key, vault) -> {
             try {
                 Material material = Material.valueOf(key.toUpperCase());
-                materialPrise.put(material, vault);
+                // Учитываем коэффициент игрока при сохранении цены
+                materialPrise.put(material, vault.price() * getPlayerCoefficient(player));
             } catch (IllegalArgumentException e) {
                 if (CFG().getBoolean("logger")) {
                     getLogger().warning("[SellZone] Неизвестный материал: " + key);
                 }
             }
         });
+
         if (CFG().getBoolean("logger")) {
             itemStacks.forEach(item -> Main.getInstance().getLogger().info(item.getType() + " : " + item.getAmount()));
         }
+
         double sum = 0d;
         for (ItemStack itemStack : itemStacks) {
             Double price = materialPrise.get(itemStack.getType());
