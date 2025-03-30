@@ -14,6 +14,11 @@ import static me.jetby.treexbuyer.configurations.Config.CFG;
 public class CoefficientManager {
     private static DatabaseManager databaseManager = Main.getInstance().getDatabaseManager();
     public static final DecimalFormat df = new DecimalFormat("#.##");
+
+    public static double getPlayerScore(Player player) {
+        UUID playerId = player.getUniqueId();
+        return databaseManager.getPlayerScores(playerId.toString());
+    }
     public static double getPlayerCoefficient(Player player) {
         UUID playerId = player.getUniqueId();
 

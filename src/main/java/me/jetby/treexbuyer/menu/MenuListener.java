@@ -147,7 +147,11 @@ public class MenuListener implements Listener {
                                 }
                                 addPlayerScores(player, totalScores);
 
-                                player.sendMessage(hex("&eВы продали предметы на сумму: &a" + totalMoney + " &eи получили &b" + totalScores + " очков"));
+                                player.sendMessage(hex(CFG().getString(
+                                                "completeSaleMessage", "&eВы продали предметы на сумму: &a%sum% &eи получили &b%score% очков")
+                                        .replace("%sum%", String.valueOf(totalMoney))
+                                        .replace("%score%", String.valueOf(totalScores))
+                                ));
                             } else {
                                 player.sendMessage(hex(CFG().getString("noItemsToSellMessage", "У вас нет предметов для продажи")));
                             }
@@ -180,7 +184,11 @@ public class MenuListener implements Listener {
                                     }
                                 }
 
-                                player.sendMessage(hex("&eВы продали предметы на сумму: &a" + totalSum + " &eи получили &b" + totalScores + " очков"));
+                                player.sendMessage(hex(CFG().getString(
+                                        "completeSaleMessage", "&eВы продали предметы на сумму: &a%sum% &eи получили &b%score% очков")
+                                        .replace("%sum%", String.valueOf(totalSum))
+                                        .replace("%score%", String.valueOf(totalScores))
+                                ));
                             }
                             break;
                         }
@@ -323,6 +331,7 @@ public class MenuListener implements Listener {
             double price = (itemData != null ? itemData.price() : 0);
             double price_with_coefficient = price * getPlayerCoefficient(player);
             double coefficient = getPlayerCoefficient(player);
+            double score = getPlayerScore(player);
 
             if (meta != null) {
                 if (button.getTitleButton() != null) {
@@ -343,6 +352,7 @@ public class MenuListener implements Listener {
                         .map(s -> hex(setPlaceholders(player, s)))
                         .map(s -> s.replace("%price%", String.valueOf(price)))
                         .map(s -> s.replace("%coefficient%", String.valueOf(coefficient)))
+                        .map(s -> s.replace("%score%", String.valueOf(score)))
                         .map(s -> s.replace("%seller_pay%", String.valueOf(count)))
                         .map(s -> s.replace("%price_with_coefficient%", String.valueOf(price_with_coefficient)))
                         .map(s -> s.replace("%auto_sell_toggle_state%", hex(autoBuyList != null && autoBuyList.contains(button.getMaterialButton().name())

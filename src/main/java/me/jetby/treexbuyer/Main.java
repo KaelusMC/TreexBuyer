@@ -105,12 +105,12 @@ public final class Main extends JavaPlugin {
         if (!setupEconomy()) {
             getLogger().info("Vault не найден!");
         }
-//        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-//            placeholderExpansion = new ASellerPlaceholder(this);
-//            placeholderExpansion.register();
-//        } else {
-//            getLogger().warning("PlaceholderAPI не обнаружен! Некоторые функции могут быть недоступны.");
-//        }
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            placeholderExpansion = new Placeholders(this);
+            placeholderExpansion.register();
+        } else {
+            getLogger().warning("PlaceholderAPI не обнаружен! Некоторые функции могут быть недоступны.");
+        }
     }
     public void menuCheck(){
         MenuLoader.getListMenu().forEach((key, vault) -> {
@@ -225,13 +225,16 @@ public final class Main extends JavaPlugin {
                 }
 
                 if (sumCount > 0d) {
-                    player.sendMessage(hex(CFG().getString("completeSaleMessage", "&aВы успешно продали все предметы на сумму &f%sum%").replace("%sum%", String.valueOf(sumCount))));
+                    player.sendMessage(hex(CFG().getString("autoBuy.message", "&aВы успешно продали все предметы на сумму &f%sum%")
+                            .replace("%sum%", String.valueOf(sumCount))
+                            .replace("%score%", String.valueOf(totalScores))
+
+                    ));
                 }
 
                 // Добавляем очки игроку, если они есть
                 if (totalScores > 0) {
                     addPlayerScores(player, totalScores);
-                    player.sendMessage(hex("&bВы также получили &f" + totalScores + " &bочков!"));
                 }
 
             }

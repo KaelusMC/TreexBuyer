@@ -5,6 +5,9 @@ import me.jetby.treexbuyer.Main;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerCoefficient;
+import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerScore;
+
 public class Placeholders extends PlaceholderExpansion {
 
     private final Main plugin;
@@ -28,14 +31,21 @@ public class Placeholders extends PlaceholderExpansion {
     @Override
     public String getIdentifier() {
 
-        return "buyer";
+        return "treexbuyer";
     }
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
 
-        // НА БУДУЩЕЕ
-        if (identifier.startsWith("pay")) {
 
+        if (identifier.equalsIgnoreCase("score")) {
+
+            return String.valueOf(getPlayerScore(player));
+
+        }
+
+        if (identifier.equalsIgnoreCase("coefficient")) {
+
+            return String.valueOf(getPlayerCoefficient(player));
 
         }
             return null;

@@ -27,7 +27,8 @@ menuItems:
     slot: 45
     displayButton: ' '
     loreButton:
-      - ' &fТекующий коэффицент: &6%coefficient%'
+      - ' &fТекующий коэффицент: &6x%coefficient%'
+      - ' &fОчков: &6%score%'
       - ' '
       - ' &6Настройка авто-скупки '
       - ' '
