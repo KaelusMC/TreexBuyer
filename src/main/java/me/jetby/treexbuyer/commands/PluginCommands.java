@@ -4,6 +4,7 @@ import me.jetby.treexbuyer.Main;
 import me.jetby.treexbuyer.configurations.Config;
 import me.jetby.treexbuyer.configurations.PriceItemCfg;
 import me.jetby.treexbuyer.configurations.MenuLoader;
+import me.jetby.treexbuyer.dataBase.DatabaseManager;
 import me.jetby.treexbuyer.menu.MenuManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -55,6 +56,8 @@ public class PluginCommands implements CommandExecutor {
             cfg.reloadCfg(plugin);
             price.reloadCfg(plugin);
             MenuLoader.loadMenus(CFG(), plugin.getDataFolder());
+
+            Main.getInstance().getDatabaseManager().initDatabase();
 
             if (sender instanceof Player player) {
                 player.sendMessage(hex("&aУспешная перезагрузка."));

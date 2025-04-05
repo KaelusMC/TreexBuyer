@@ -189,7 +189,7 @@ public final class Main extends JavaPlugin {
         return itemPrise;
     }
     public void startAutoBuy() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, () -> {
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 UUID playerId = player.getUniqueId();
@@ -218,7 +218,11 @@ public final class Main extends JavaPlugin {
                                 economy.depositPlayer(player, totalPrice);
                                 sumCount += totalPrice;
                                 totalScores += scores * item.getAmount(); // Учитываем количество предметов
-                                player.getInventory().remove(item);
+                                if (player.getEquipment().getItemInOffHand().equals(item)) {
+                                    player.getEquipment().setItemInOffHand(new ItemStack(Material.AIR));
+                                }
+
+                                player.getInventory().removeItem(item);
                             }
                         }
                     }
