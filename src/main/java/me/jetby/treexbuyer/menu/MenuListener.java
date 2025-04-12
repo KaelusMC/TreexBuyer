@@ -103,7 +103,7 @@ public class MenuListener implements Listener {
         }
 
         if (clickedInventory.equals(topInventory)) {
-            // Проверяем клик по кнопке
+
             for (MenuButton button : menu.getButtons()) {
                 if (event.getSlot() == button.getSlotButton()) {
 
@@ -162,10 +162,8 @@ public class MenuListener implements Listener {
                             Map<ClickType, List<String>> commandsMap = button.getCommands();
                             ClickType clickType = event.getClick();
 
-                            // Получаем команды ТОЛЬКО для конкретного типа клика
                             List<String> commands = commandsMap.get(clickType);
 
-                            // Если команды найдены, выполняем их
                             if (commands != null && !commands.isEmpty()) {
                                 for (String actions : commands) {
                                     executeCommand(player, actions, button);
