@@ -55,6 +55,7 @@ public class SellZone {
     public static Double getCountPlayer(UUID uuid){
         return countPlayer.get(uuid);
     }
+
     public static void clearPlayer(UUID uuid){
         countPlayer.remove(uuid);
 

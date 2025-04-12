@@ -17,10 +17,10 @@ public class PriceItemCfg {
     private static File file;
 
     public void loadYamlFile(Plugin plugin) {
-        file = new File(plugin.getDataFolder(), "priseItem.yml");
-        if (!file.exists()) { //проверка на то есть ли файл, если нет - создаётся папка и сохраняется файл.
+        file = new File(plugin.getDataFolder(), "priceItem.yml");
+        if (!file.exists()) {
             plugin.getDataFolder().mkdirs();
-            plugin.saveResource("priseItem.yml", true);
+            plugin.saveResource("priceItem.yml", true);
         }
 
         config = YamlConfiguration.loadConfiguration(file);
@@ -31,23 +31,23 @@ public class PriceItemCfg {
     }
 
     public void reloadCfg(Plugin plugin) {
-        if(!file.exists()) { //проверка на то есть ли файл, если нет - создаётся папка и сохраняется файл.
+        if(!file.exists()) {
             plugin.getDataFolder().mkdirs();
-            plugin.saveResource("priseItem.yml", true);
+            plugin.saveResource("priceItem.yml", true);
         }
         try {
             config.load(file);
-            Bukkit.getConsoleSender().sendMessage("Конфигурация перезагружена! (priseItem.yml)");
+            Bukkit.getConsoleSender().sendMessage("Конфигурация перезагружена! (priceItem.yml)");
         } catch (IOException | InvalidConfigurationException e) {
-            Bukkit.getConsoleSender().sendMessage("Не удалось перезагрузить конфигурацию! (priseItem.yml)");
+            Bukkit.getConsoleSender().sendMessage("Не удалось перезагрузить конфигурацию! (priceItem.yml)");
         }
     }
     public void saveCfg(Plugin plugin) {
         try {
-            File file = new File(plugin.getDataFolder(), "priseItem.yml");
+            File file = new File(plugin.getDataFolder(), "priceItem.yml");
             config.save(file);
         } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Не удалось сохранить файл priseItem.yml", e);
+            getLogger().log(Level.SEVERE, "Не удалось сохранить файл priceItem.yml", e);
         }
     }
 }

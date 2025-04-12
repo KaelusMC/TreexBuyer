@@ -3,11 +3,9 @@ package me.jetby.treexbuyer;
 import me.jetby.treexbuyer.commands.PluginCommands;
 import me.jetby.treexbuyer.commands.PluginCompleter;
 import me.jetby.treexbuyer.configurations.Config;
-import me.jetby.treexbuyer.menu.Menu;
-import me.jetby.treexbuyer.menu.MenuListener;
-import me.jetby.treexbuyer.menu.MenuManager;
+import me.jetby.treexbuyer.listeners.OnJoin;
+import me.jetby.treexbuyer.menu.*;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
-import me.jetby.treexbuyer.menu.MenusCommands;
 import me.jetby.treexbuyer.configurations.PriceItemCfg;
 import me.jetby.treexbuyer.dataBase.DatabaseManager;
 import me.jetby.treexbuyer.configurations.MenuLoader;
@@ -31,7 +29,9 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static me.jetby.treexbuyer.autoBuy.AutoBuy.getAutoBuyStatus;
 import static me.jetby.treexbuyer.boost.CoefficientManager.addPlayerScores;
+import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerCoefficient;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.utils.Hex.hex;
 
@@ -40,7 +40,7 @@ public final class Main extends JavaPlugin {
     public Economy economy;
     private Placeholders placeholderExpansion;
     private MenuManager menuManager;
-    private Map<String, PriseItemLoader.ItemData> itemPrise;
+    private Map<String, PriseItemLoader.ItemData> itemPrice;
 
 
 
@@ -68,6 +68,7 @@ public final class Main extends JavaPlugin {
 
         menuManager = new MenuManager(MenuLoader.getListMenu());
         getServer().getPluginManager().registerEvents(new MenuListener(), this);
+        getServer().getPluginManager().registerEvents(new OnJoin(), this);
 
         this.databaseManager = new DatabaseManager();
         databaseManager.initDatabase();
@@ -77,9 +78,9 @@ public final class Main extends JavaPlugin {
         getCommand("treexbuyer").setExecutor(new PluginCommands());
         getCommand("treexbuyer").setTabCompleter(new PluginCompleter());
 
-        String path = CFG().getString("priseItem.path");
+        String path = CFG().getString("priceItem.path");
         File itemFile = new File(getDataFolder(), path);
-        itemPrise = PriseItemLoader.loadItemValuesFromFile(itemFile);
+        itemPrice = PriseItemLoader.loadItemValuesFromFile(itemFile);
 
 
 
@@ -182,21 +183,22 @@ public final class Main extends JavaPlugin {
     private DatabaseManager databaseManager;
 
     public PriseItemLoader.ItemData getPriseItem(String material) {
-        return itemPrise.get(material);
+        return itemPrice.get(material);
     }
 
-    public Map<String, PriseItemLoader.ItemData> getItemPrise() {
-        return itemPrise;
+    public Map<String, PriseItemLoader.ItemData> getItemPrice() {
+        return itemPrice;
     }
     public void startAutoBuy() {
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(this, () -> {
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 UUID playerId = player.getUniqueId();
-                if (!AutoBuy.getAutoBuyPlayersMap().containsKey(playerId)) {
-                    AutoBuy.checkPlayer(playerId);
+                if (!getAutoBuyStatus(player.getUniqueId())) {
+                    return;
                 }
-                List<String> autoBuyList = AutoBuy.getAutoBuyPlayers(playerId);
+
+                List<String> autoBuyList = AutoBuy.getAutoBuyItems(playerId);
 
                 // если список autoBuy пуст, скип игрока
                 if (autoBuyList == null || autoBuyList.isEmpty()) {
@@ -216,7 +218,7 @@ public final class Main extends JavaPlugin {
                             if (price > 0d) {
                                 double totalPrice = price * item.getAmount();
                                 economy.depositPlayer(player, totalPrice);
-                                sumCount += totalPrice;
+                                sumCount += totalPrice * getPlayerCoefficient(player);
                                 totalScores += scores * item.getAmount(); // Учитываем количество предметов
                                 if (player.getEquipment().getItemInOffHand().equals(item)) {
                                     player.getEquipment().setItemInOffHand(new ItemStack(Material.AIR));

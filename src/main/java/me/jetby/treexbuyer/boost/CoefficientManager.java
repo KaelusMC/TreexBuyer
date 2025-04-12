@@ -25,18 +25,16 @@ public class CoefficientManager {
         // Базовый коэффициент
         double defaultCoefficient = CFG().getDouble("default-coefficient", 1.0);
 
-        // Получаем очки игрока из базы данных
         double playerScore = databaseManager.getPlayerScores(playerId.toString());
 
-        // Коэффициент за каждые 100 очков
         int scoreStep = CFG().getInt("score-to-multiplier-ratio.scores", 100);
         double coefficientStep = CFG().getDouble("score-to-multiplier-ratio.coefficient", 1.0);
 
-        // Вычисляем, сколько раз игрок достиг кратного значения scoreStep
+        // сколько раз игрок достиг кратного значения scoreStep
         int multiplierCount = (int) (playerScore / scoreStep);
         double coefficient = multiplierCount * coefficientStep;
 
-        // Добавляем донатные бусты
+        // донатные бусты
         ConfigurationSection booster = CFG().getConfigurationSection("booster");
         if (booster != null) {
             for (String boosterKey : booster.getKeys(false)) {
@@ -48,11 +46,11 @@ public class CoefficientManager {
             }
         }
 
-        // Ограничиваем максимальным коэффициентом
+        // ограничение максимальным коэффициентом
         double maxLegalCoefficient = CFG().getDouble("max-legal-coefficient", 5.0);
         coefficient = Math.min(coefficient, maxLegalCoefficient);
 
-        // Учитываем базовый коэффициент
+        // учитывать базовый коэффициент
         coefficient = Math.max(coefficient, defaultCoefficient);
 
         return Double.parseDouble(df.format(coefficient));

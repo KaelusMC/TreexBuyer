@@ -19,7 +19,7 @@ public class Config {
 
     public void loadYamlFile(Plugin plugin) {
         file = new File(plugin.getDataFolder(), "config.yml");
-        if (!file.exists()) { //проверка на то есть ли файл, если нет - создаётся папка и сохраняется файл.
+        if (!file.exists()) {
             plugin.getDataFolder().mkdirs();
             plugin.saveResource("config.yml", true);
         }
@@ -32,7 +32,7 @@ public class Config {
     }
 
     public void reloadCfg(Plugin plugin) {
-        if(!file.exists()) { //проверка на то есть ли файл, если нет - создаётся папка и сохраняется файл.
+        if(!file.exists()) {
             plugin.getDataFolder().mkdirs();
             plugin.saveResource("config.yml", true);
         }

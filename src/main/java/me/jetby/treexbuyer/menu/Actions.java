@@ -1,5 +1,6 @@
 package me.jetby.treexbuyer.menu;
 
+import me.jetby.treexbuyer.Main;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -13,18 +14,25 @@ import static me.jetby.treexbuyer.utils.Hex.hex;
 
 
 public class Actions {
-
-
+    
     public static void execute(Player player, String command) {
         String[] args = command.split(" ");
         String withoutCMD = command.replace(args[0] + " ", "");
 
 
         switch (args[0].toUpperCase()) {
-            case "[MESSAGE]": {
+
+            case "[OPEN_MENU]": {
+                Main.getInstance().getMenuManager().openMenu(player, withoutCMD);
+
+                break;
+            }
+
+            case "[MESSAGE]", "[MSG]": {
                 player.sendMessage(hex(withoutCMD));
                 break;
             }
+
 
             case "[PLAYER]": {
                 Bukkit.dispatchCommand(player, hex(withoutCMD.replace("%player%", player.getName())));

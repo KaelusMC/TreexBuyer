@@ -1,8 +1,8 @@
 
 logger: false
 
-priseItem:
-  path: priseItem.yml
+priceItem:
+  path: priceItem.yml
 
 menu:
   seller:
@@ -15,13 +15,14 @@ menu:
 
 
 autoBuyDelay: 60 # В тиках. Как часто будет срабатывать АвтоСкупка. По умолчанию 60 - 3 секунды
+
 autoBuy:
   enable: "&aВключён"
   disable: "&cВыключен"
   message: "&eПродано предметов на сумму: &a%sum% &eи получено &b%score% очков"
 
 #########################[Сообщения]#######################
-completeSaleMessage: '&eВы продали предметы на сумму: &a%sum% &eи получили &b%score% очков'
+completeSaleMessage: '&eВы продали предметы на сумму: &a%sell_pay% &eи получили &b%sell_score% очков'
 noItemsToSellMessage: 'У вас нет предметов для продажи'
 
 

@@ -1,5 +1,7 @@
 package me.jetby.treexbuyer.dataBase;
 
+import me.jetby.treexbuyer.Main;
+
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
@@ -42,13 +44,18 @@ public class DatabaseManager {
 
 
     private void createTable() {
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS player_data (uuid TEXT PRIMARY KEY, data TEXT);";
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS player_data (uuid TEXT PRIMARY KEY, data TEXT, status INTEGER DEFAULT 1);";
         String createScoresTableSQL = "CREATE TABLE IF NOT EXISTS player_scores (uuid TEXT PRIMARY KEY, scores INTEGER);";
+        String alterTableSQL = "ALTER TABLE player_data ADD COLUMN status INTEGER DEFAULT 1;";
 
-        try (PreparedStatement statement = connection.prepareStatement(createTableSQL);
-             PreparedStatement scoresStatement = connection.prepareStatement(createScoresTableSQL)) {
-            statement.execute();
-            scoresStatement.execute();
+        try (Statement statement = connection.createStatement()) {
+            statement.execute(createTableSQL);
+            statement.execute(createScoresTableSQL);
+            try {
+                statement.execute(alterTableSQL); // добавляем колонку, если её не было
+            } catch (SQLException ignored) {
+                // Если колонка уже есть — игнорируем ошибку
+            }
             if (CFG().getBoolean("logger")) {
                 getLogger().info("[TreexBuyer] Таблицы player_data и player_scores успешно созданы или уже существуют.");
             }
@@ -59,6 +66,8 @@ public class DatabaseManager {
             }
         }
     }
+
+
     public void addOrUpdatePlayerScores(String uuid, double scores) {
         String upsertSQL = "INSERT INTO player_scores (uuid, scores) VALUES (?, ?) ON CONFLICT(uuid) DO UPDATE SET scores = ?;";
 
@@ -78,6 +87,32 @@ public class DatabaseManager {
                 getLogger().info("[TreexBuyer] Ошибка при добавлении или обновлении очков: " + e.getMessage());
             }
         }
+    }
+    public void setAutoBuyStatus(String uuid, boolean status) {
+        String sql = "UPDATE player_data SET status = ? WHERE uuid = ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, status ? 1 : 0);
+            statement.setString(2, uuid);
+            statement.executeUpdate();
+            if (CFG().getBoolean("logger")) {
+                getLogger().info("[TreexBuyer] autoBuyStatus обновлён для " + uuid + ": " + status);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public boolean getAutoBuyStatus(String uuid) {
+        String sql = "SELECT status FROM player_data WHERE uuid = ?;";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, uuid);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("status") == 1;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public double getPlayerScores(String uuid) {

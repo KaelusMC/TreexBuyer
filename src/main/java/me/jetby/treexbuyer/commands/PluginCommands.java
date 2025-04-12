@@ -1,6 +1,7 @@
 package me.jetby.treexbuyer.commands;
 
 import me.jetby.treexbuyer.Main;
+import me.jetby.treexbuyer.autoBuy.AutoBuy;
 import me.jetby.treexbuyer.configurations.Config;
 import me.jetby.treexbuyer.configurations.PriceItemCfg;
 import me.jetby.treexbuyer.configurations.MenuLoader;
@@ -12,6 +13,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 import static me.jetby.treexbuyer.boost.CoefficientManager.*;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
@@ -56,6 +59,12 @@ public class PluginCommands implements CommandExecutor {
             cfg.reloadCfg(plugin);
             price.reloadCfg(plugin);
             MenuLoader.loadMenus(CFG(), plugin.getDataFolder());
+
+            for (Player players : Bukkit.getOnlinePlayers()) {
+                if (!AutoBuy.getAutoBuyItemsMap().containsKey(players.getUniqueId())) {
+                    AutoBuy.checkPlayer(players.getUniqueId());
+                }
+            }
 
             Main.getInstance().getDatabaseManager().initDatabase();
 
