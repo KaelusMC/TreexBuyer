@@ -27,6 +27,8 @@
 #
 # [DISABLE_ALL]
 #
+# [SELL_ITEM] <amount>/all
+#
 # [SELL_ALL]
 #
 # [SELL_ZONE]

@@ -25,7 +25,9 @@ autoBuy:
 completeSaleMessage: '&eВы продали предметы на сумму: &a%sell_pay% &eи получили &b%sell_score% очков'
 noItemsToSellMessage: 'У вас нет предметов для продажи'
 
-
+# ALL - Коэффициент работает на все предметы одинаково
+# CATEGORY -
+coefficientType: ALL
 
 # за каждые 100 очков игрок будет получать +0.1 к коэффициенту
 score-to-multiplier-ratio:

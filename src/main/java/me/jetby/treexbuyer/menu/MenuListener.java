@@ -129,7 +129,7 @@ public class MenuListener implements Listener {
                                             totalMoney += price * item.getAmount();
                                             totalScores += addScores * item.getAmount();
                                         }
-                                    } break;
+                                    }
                                 }
                             }
 
@@ -268,7 +268,6 @@ public class MenuListener implements Listener {
             }
         }
 
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             List<ItemStack> itemStacks = new ArrayList<>();
             for (int i = 0; i < topInventory.getSize(); i++) {
                 ItemStack itemStack = topInventory.getItem(i);
@@ -286,7 +285,7 @@ public class MenuListener implements Listener {
             for (MenuButton btn : menu.getButtons()) {
                 updateMenu(btn, topInventory, SellZone.getCountPlayerString(player.getUniqueId(), 0), player);
             }
-        }, 1L);
+
     }
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) {
