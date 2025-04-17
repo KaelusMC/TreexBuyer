@@ -5,7 +5,7 @@ import me.jetby.treexbuyer.autoBuy.AutoBuy;
 import me.jetby.treexbuyer.configurations.Config;
 import me.jetby.treexbuyer.configurations.PriceItemCfg;
 import me.jetby.treexbuyer.configurations.MenuLoader;
-import me.jetby.treexbuyer.dataBase.DatabaseManager;
+import me.jetby.treexbuyer.dataBase.DatabaseUtils;
 import me.jetby.treexbuyer.menu.MenuManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,8 +13,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 import static me.jetby.treexbuyer.boost.CoefficientManager.*;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
@@ -66,7 +64,7 @@ public class PluginCommands implements CommandExecutor {
                 }
             }
 
-            Main.getInstance().getDatabaseManager().initDatabase();
+            DatabaseUtils.initDatabase();
 
             if (sender instanceof Player player) {
                 player.sendMessage(hex("&aУспешная перезагрузка."));

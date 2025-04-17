@@ -4,7 +4,9 @@ import me.jetby.treexbuyer.Main;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
 import me.jetby.treexbuyer.configurations.PriseItemLoader;
 import me.jetby.treexbuyer.utils.Hex;
+import me.jetby.treexbuyer.utils.SkullCreator;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -13,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,10 +35,16 @@ public class MenuManager {
         this.listMenus = listMenus;
     }
 
+    private static final String TEST_SKULL = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDllY2NjNWMxYzc5YWE3ODI2YTE1YTdmNWYxMmZiNDAzMjgxNTdjNTI0MjE2NGJhMmFlZjQ3ZTVkZTlhNWNmYyJ9fX0=";
 
     public static void updateMenu(MenuButton button, Inventory topInventory, String count, Player player) {
+
         if (!button.getCommand().contains("[sell_zone]")) {
-            ItemStack itemStack = new ItemStack(button.getMaterialButton());
+
+
+
+            ItemStack itemStack = button.getItemStackofMaterial();
+
             ItemMeta meta = itemStack.getItemMeta();
 
             PriseItemLoader.ItemData itemData = Main.getInstance().getPriseItem(button.getMaterialButton().name());

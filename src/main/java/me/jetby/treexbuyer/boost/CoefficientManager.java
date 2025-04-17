@@ -1,40 +1,46 @@
 package me.jetby.treexbuyer.boost;
 
-import me.jetby.treexbuyer.Main;
 import me.jetby.treexbuyer.configurations.Config;
-import me.jetby.treexbuyer.dataBase.DatabaseManager;
+import me.jetby.treexbuyer.dataBase.DatabaseUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 
 public class CoefficientManager {
-    private static DatabaseManager databaseManager = Main.getInstance().getDatabaseManager();
+
     public static final DecimalFormat df = new DecimalFormat("#.##");
 
     public static double getPlayerScore(Player player) {
-        UUID playerId = player.getUniqueId();
-        return databaseManager.getPlayerScores(playerId.toString());
+        UUID uuid = player.getUniqueId();
+        Double result = DatabaseUtils.get("players", uuid, "scores", rs -> {
+            try {
+                return rs.getDouble("scores");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0.0;
+            }
+        });
+        return result == null ? 0.0 : result;
     }
+
     public static double getPlayerCoefficient(Player player) {
-        UUID playerId = player.getUniqueId();
+        UUID uuid = player.getUniqueId();
 
-        // Базовый коэффициент
         double defaultCoefficient = CFG().getDouble("default-coefficient", 1.0);
-
-        double playerScore = databaseManager.getPlayerScores(playerId.toString());
+        double playerScore = getPlayerScore(player);
 
         int scoreStep = CFG().getInt("score-to-multiplier-ratio.scores", 100);
         double coefficientStep = CFG().getDouble("score-to-multiplier-ratio.coefficient", 1.0);
 
-        // сколько раз игрок достиг кратного значения scoreStep
         int multiplierCount = (int) (playerScore / scoreStep);
         double coefficient = multiplierCount * coefficientStep;
 
-        // донатные бусты
         ConfigurationSection booster = CFG().getConfigurationSection("booster");
         if (booster != null) {
             for (String boosterKey : booster.getKeys(false)) {
@@ -46,20 +52,18 @@ public class CoefficientManager {
             }
         }
 
-        // ограничение максимальным коэффициентом
         double maxLegalCoefficient = CFG().getDouble("max-legal-coefficient", 5.0);
         coefficient = Math.min(coefficient, maxLegalCoefficient);
-
-        // учитывать базовый коэффициент
         coefficient = Math.max(coefficient, defaultCoefficient);
 
         return Double.parseDouble(df.format(coefficient));
     }
 
-
     public static void addPlayerScores(Player player, double scores) {
-        UUID playerId = player.getUniqueId();
-        double currentScores = databaseManager.getPlayerScores(playerId.toString());
-        databaseManager.addOrUpdatePlayerScores(playerId.toString(), currentScores + scores);
+        UUID uuid = player.getUniqueId();
+        double current = getPlayerScore(player);
+        Map<String, Object> data = new HashMap<>();
+        data.put("scores", current + scores);
+        DatabaseUtils.insertOrUpdate("players", uuid, data);
     }
 }

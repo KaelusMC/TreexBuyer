@@ -1,7 +1,10 @@
 package me.jetby.treexbuyer.menu;
 
+import me.jetby.treexbuyer.utils.SkullCreator;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +17,14 @@ public class MenuButton {
     boolean hide_attributes;
     boolean enchanted;
     List<String> loreButton;
-    Material materialButton;
+    String materialButton;
     List<String> command;
     Map<ClickType, List<String>> commands; // Изменяем на Map для хранения команд по типам кликов
 
     public MenuButton(Integer slotButton,
                       String titleButton,
                       List<String> loreButton,
-                      Material materialButton,
+                      String materialButton,
                       Map<ClickType, List<String>> commands,
                       List<String> command,
                       boolean hide_enchantments,
@@ -64,7 +67,31 @@ public class MenuButton {
     }
 
     public Material getMaterialButton() {
-        return materialButton;
+
+        if (materialButton.startsWith("basehead-")) {
+            return Material.valueOf(SkullCreator.createSkull().getType().name());
+
+        }
+
+
+        return Material.valueOf(materialButton);
+    }
+
+    public ItemStack getItemStackofMaterial() {
+
+        ItemStack itemStack;
+        if (materialButton.startsWith("basehead-")) {
+            try {
+                itemStack = SkullCreator.itemFromBase64(materialButton.replace("basehead-", ""));
+            } catch (Exception e) {
+                Bukkit.getLogger().warning("Ошибка при создании кастомного черепа: " + e.getMessage());
+                itemStack = new ItemStack(Material.PLAYER_HEAD);
+            }
+        } else {
+            itemStack = new ItemStack(Material.valueOf(materialButton));
+        }
+
+        return itemStack;
     }
 
     public Map<ClickType, List<String>> getCommands() {

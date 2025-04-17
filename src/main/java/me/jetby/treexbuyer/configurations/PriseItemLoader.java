@@ -30,4 +30,5 @@ public class PriseItemLoader {
 
     public record ItemData(double price, int addScores) {
     }
+
 }

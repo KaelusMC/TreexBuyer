@@ -19,6 +19,8 @@ public class Config {
 
     public void loadYamlFile(Plugin plugin) {
         file = new File(plugin.getDataFolder(), "config.yml");
+
+
         if (!file.exists()) {
             plugin.getDataFolder().mkdirs();
             plugin.saveResource("config.yml", true);

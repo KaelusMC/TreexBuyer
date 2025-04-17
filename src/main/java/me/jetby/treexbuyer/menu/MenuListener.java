@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -26,6 +27,7 @@ import static me.jetby.treexbuyer.boost.CoefficientManager.*;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.menu.MenuManager.updateMenu;
 import static me.jetby.treexbuyer.utils.Hex.hex;
+import static org.bukkit.Bukkit.getLogger;
 
 public class MenuListener implements Listener {
 
@@ -98,9 +100,7 @@ public class MenuListener implements Listener {
             }
         }
 
-        if (!isSellZoneSlot) {
-            event.setCancelled(true);
-        }
+        if (!isSellZoneSlot) event.setCancelled(true);
 
         if (clickedInventory.equals(topInventory)) {
 
@@ -108,52 +108,62 @@ public class MenuListener implements Listener {
                 if (event.getSlot() == button.getSlotButton()) {
 
 
-                    if (button.isSellZone()) {
-                        return;
-                    }
+                    if (button.isSellZone()) return;
+
 
                     List<String> allCommands = button.getAllCommands();
 
                     for (String command : allCommands) {
                         if (command.equalsIgnoreCase("[sell_all]")) {
                             event.setCancelled(true);
+
+                            List<ItemStack> itemsToRemove = new ArrayList<>();
+
                             for (MenuButton btn : menu.getButtons()) {
                                 if (btn.isSellZone()) {
                                     ItemStack item = topInventory.getItem(btn.getSlotButton());
-
                                     if (item != null) {
-                                        PriseItemLoader.ItemData itemData = Main.getInstance().getPriseItem(item.getType().name());
-                                        if (itemData != null) {
-                                            double price = itemData.price() * getPlayerCoefficient(player);
-                                            int addScores = itemData.addScores();
-                                            totalMoney += price * item.getAmount();
-                                            totalScores += addScores * item.getAmount();
+
+                                        ItemMeta meta = item.getItemMeta();
+
+                                        boolean isRegularItem = meta != null &&
+                                                !(meta.hasDisplayName() && !meta.getDisplayName().isEmpty()) &&
+                                                !meta.hasLore() &&
+                                                !meta.hasAttributeModifiers() &&
+                                                !meta.hasEnchants() &&
+                                                !meta.hasCustomModelData();
+
+                                        if (isRegularItem) {
+                                            PriseItemLoader.ItemData itemData = Main.getInstance().getPriseItem(item.getType().name());
+                                            if (itemData != null) {
+                                                double price = itemData.price() * getPlayerCoefficient(player);
+                                                int addScores = itemData.addScores();
+
+                                                totalMoney += price * item.getAmount();
+                                                totalScores += addScores * item.getAmount();
+                                                itemsToRemove.add(item);
+
+                                            }
                                         }
+                                    }
+                                }
+                            }
+
+                            for (ItemStack item : itemsToRemove) {
+                                for (MenuButton btn : menu.getButtons()) {
+                                    if (btn.isSellZone() && item.equals(topInventory.getItem(btn.getSlotButton()))) {
+                                        topInventory.setItem(btn.getSlotButton(), null);
+                                        break;
                                     }
                                 }
                             }
 
                             if (totalMoney > 0 || totalScores > 0) {
                                 Main.getInstance().economy.depositPlayer(player, totalMoney);
-
-                                for (MenuButton btn : menu.getButtons()) {
-                                    if (btn.isSellZone()) {
-                                        ItemStack item = topInventory.getItem(btn.getSlotButton());
-                                        if (item != null) {
-                                            PriseItemLoader.ItemData itemData = Main.getInstance().getPriseItem(item.getType().name());
-                                            if (itemData != null) {
-                                                topInventory.setItem(btn.getSlotButton(), null);
-                                            }
-
-                                        }
-                                    }
-                                }
-
                                 addPlayerScores(player, totalScores);
                                 player.sendMessage(hex(CFG().getString("completeSaleMessage", "&eВы продали предметы на сумму: &a%sell_pay% &eи получили &b%sell_score% очков")
                                         .replace("%sell_pay%", String.valueOf(totalMoney))
                                         .replace("%sell_score%", String.valueOf(totalScores))));
-
                             } else {
                                 player.sendMessage(hex(CFG().getString("noItemsToSellMessage", "У вас нет предметов для продажи")));
                             }
@@ -164,11 +174,10 @@ public class MenuListener implements Listener {
 
                             List<String> commands = commandsMap.get(clickType);
 
-                            if (commands != null && !commands.isEmpty()) {
                                 for (String actions : commands) {
                                     executeCommand(player, actions, button);
                                 }
-                            }
+
                         }
 
                         break;
@@ -179,7 +188,91 @@ public class MenuListener implements Listener {
 
         }
     }
+
+    private void checkForItems(Player player, String type, ItemStack itemStack) {
+        double sumCount = 0d;
+        int totalScores = 0;
+        ItemStack air = new ItemStack(Material.AIR);
+        Material targetType = itemStack.getType();
+
+        if (type.equalsIgnoreCase("all")) {
+            for (ItemStack var : player.getInventory().getContents()) {
+                if (var != null && targetType.equals(var.getType())) {
+                    int amount = var.getAmount();
+
+                    PriseItemLoader.ItemData itemData = Main.getInstance().getPriseItem(targetType.name());
+                    if (itemData != null && itemData.price() > 0d) {
+                        double totalPrice = itemData.price() * amount;
+                        int scores = itemData.addScores() * amount;
+
+                        Main.getInstance().economy.depositPlayer(player, totalPrice);
+                        sumCount += totalPrice * getPlayerCoefficient(player);
+                        totalScores += scores;
+
+                        player.getInventory().removeItem(new ItemStack(targetType, amount));
+                    }
+                }
+            }
+        } else {
+            int amount;
+            try {
+                amount = Integer.parseInt(type);
+            } catch (NumberFormatException e) {
+                player.sendMessage("§cОшибка: неверный формат количества. Укажите число или 'all'.");
+                return;
+            }
+
+            for (ItemStack var : player.getInventory().getContents()) {
+                if (var != null && targetType.equals(var.getType()) && var.getAmount() >= amount) {
+                    ItemStack item = new ItemStack(targetType, amount);
+                    PriseItemLoader.ItemData itemData = Main.getInstance().getPriseItem(targetType.name());
+
+                    if (itemData != null && itemData.price() > 0d) {
+                        double totalPrice = itemData.price() * amount;
+                        int scores = itemData.addScores() * amount;
+
+                        Main.getInstance().economy.depositPlayer(player, totalPrice);
+                        sumCount += totalPrice * getPlayerCoefficient(player);
+                        totalScores += scores;
+
+                        // Удаление предмета из слотов брони и оффхэнда
+                        PlayerInventory inv = player.getInventory();
+                        if (player.getEquipment().getItemInOffHand() != null && player.getEquipment().getItemInOffHand().isSimilar(item))
+                            player.getEquipment().setItemInOffHand(air);
+                        if (inv.getHelmet() != null && inv.getHelmet().isSimilar(item)) inv.setHelmet(air);
+                        if (inv.getChestplate() != null && inv.getChestplate().isSimilar(item)) inv.setChestplate(air);
+                        if (inv.getLeggings() != null && inv.getLeggings().isSimilar(item)) inv.setLeggings(air);
+                        if (inv.getBoots() != null && inv.getBoots().isSimilar(item)) inv.setBoots(air);
+
+                        inv.removeItem(item);
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (sumCount > 0d) {
+            player.sendMessage(hex(CFG().getString("autoBuy.message", "&aВы успешно продали все предметы на сумму &f%sum%")
+                    .replace("%sum%", String.valueOf(sumCount))
+                    .replace("%score%", String.valueOf(totalScores))
+            ));
+        } else {
+            player.sendMessage(CFG().getString("noItemsToSellMessage", "§cУ вас не достаточно предметов для продажи."));
+        }
+
+        if (totalScores > 0) {
+            addPlayerScores(player, totalScores);
+        }
+    }
+
+
     private void executeCommand(Player player, String command, MenuButton button) {
+        String[] args = command.split(" ");
+        String withoutCMD = command.replace(args[0] + " ", "");
+        if (args[0].equalsIgnoreCase("[sell_item]")) {
+            checkForItems(player, withoutCMD, new ItemStack(button.getMaterialButton()));
+            return;
+        }
 
         switch (command.toLowerCase()) {
 
@@ -192,6 +285,7 @@ public class MenuListener implements Listener {
 
                 break;
             }
+
 
 
             case "[autobuy_status_toggle]": {

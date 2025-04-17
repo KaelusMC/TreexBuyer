@@ -3,14 +3,18 @@ package me.jetby.treexbuyer.configurations;
 import me.jetby.treexbuyer.Main;
 import me.jetby.treexbuyer.menu.Menu;
 import me.jetby.treexbuyer.menu.MenuButton;
+import me.jetby.treexbuyer.utils.SkullCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
 
 public class MenuLoader {
 
@@ -48,7 +52,6 @@ public class MenuLoader {
         if (menuConfig.contains("Items")) {
             for (String buttonKey : menuConfig.getConfigurationSection("Items").getKeys(false)) {
                 String materialName = menuConfig.getString("Items." + buttonKey + ".material");
-                Material material = Material.getMaterial(materialName);
 
                 Object slotString = menuConfig.get("Items." + buttonKey + ".slot");
                 List<Integer> slots = parseSlots(slotString); // Используем parseSlots для обработки слотов
@@ -98,7 +101,7 @@ public class MenuLoader {
                     MenuButton menuButton = new MenuButton(slot,
                             titleButton,
                             loreButton,
-                            material,
+                            materialName,
                             commandsMap,
                             oldCommands,
                             hide_enchantments,

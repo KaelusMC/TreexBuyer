@@ -20,6 +20,9 @@ autoBuy:
   enable: "&aВключён"
   disable: "&cВыключен"
   message: "&eПродано предметов на сумму: &a%sum% &eи получено &b%score% очков"
+  disabled-worlds:
+    - duel-1
+    - duel-2
 
 #########################[Сообщения]#######################
 completeSaleMessage: '&eВы продали предметы на сумму: &a%sell_pay% &eи получили &b%sell_score% очков'
