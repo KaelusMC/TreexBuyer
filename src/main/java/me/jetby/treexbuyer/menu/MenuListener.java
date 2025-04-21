@@ -27,7 +27,6 @@ import static me.jetby.treexbuyer.boost.CoefficientManager.*;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.menu.MenuManager.updateMenu;
 import static me.jetby.treexbuyer.utils.Hex.hex;
-import static org.bukkit.Bukkit.getLogger;
 
 public class MenuListener implements Listener {
 
@@ -170,9 +169,18 @@ public class MenuListener implements Listener {
                         } else {
                             event.setCancelled(true);
                             Map<ClickType, List<String>> commandsMap = button.getCommands();
+
+                            if (commandsMap==null) {
+                                return;
+                            }
+
                             ClickType clickType = event.getClick();
 
                             List<String> commands = commandsMap.get(clickType);
+
+                            if (commands==null) {
+                                return;
+                            }
 
                                 for (String actions : commands) {
                                     executeCommand(player, actions, button);
