@@ -16,13 +16,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static me.jetby.treexbuyer.autoBuy.AutoBuy.getAutoBuyItemsMap;
 import static me.jetby.treexbuyer.autoBuy.AutoBuy.getAutoBuyStatus;
-import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerCoefficient;
-import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerScore;
+import static me.jetby.treexbuyer.boost.CoefficientManager.*;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.menu.MenuListener.NAMESPACED_KEY;
 import static me.jetby.treexbuyer.utils.Hex.hex;
@@ -30,6 +31,7 @@ import static me.jetby.treexbuyer.utils.Hex.setPlaceholders;
 
 public class MenuManager {
     private final Map<String, Menu> listMenus;
+    private boolean isAutoBuyItemsMap = false;
 
     public MenuManager(Map<String, Menu> listMenus) {
         this.listMenus = listMenus;
@@ -51,7 +53,7 @@ public class MenuManager {
             double price = (itemData != null ? itemData.price() : 0);
             double price_with_coefficient = price * getPlayerCoefficient(player);
             double coefficient = getPlayerCoefficient(player);
-            double score = getPlayerScore(player);
+            double score = getCachedScore(player);
 
             String enabled = CFG().getString("autoBuy.enable", "&aВключён");
             String disabled = CFG().getString("autoBuy.disable", "&cВыключён");
@@ -126,6 +128,19 @@ public class MenuManager {
 
         Inventory inventory = Bukkit.createInventory(menu, menu.getSize(), hex(menu.getTitleMenu()));
 
+        if (!(inventory.getHolder() instanceof Menu)) {
+            return;
+        }
+
+
+        for (MenuButton btn : menu.getButtons()) {
+            List<ItemStack> itemStacks = new ArrayList<>();
+            SellZone.checkItem(itemStacks, Main.getInstance().getItemPrice(), player);
+
+
+            updateMenu(btn, inventory, SellZone.getCountPlayerString(player.getUniqueId(), 0), player);
+
+        }
 
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> player.openInventory(inventory), 1L);
     }

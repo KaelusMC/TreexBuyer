@@ -5,8 +5,8 @@ import me.jetby.treexbuyer.Main;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import static me.jetby.treexbuyer.boost.CoefficientManager.getCachedScore;
 import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerCoefficient;
-import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerScore;
 
 public class Placeholders extends PlaceholderExpansion {
 
@@ -39,7 +39,7 @@ public class Placeholders extends PlaceholderExpansion {
 
         if (identifier.equalsIgnoreCase("score")) {
 
-            return String.valueOf(getPlayerScore(player));
+            return String.valueOf(getCachedScore(player));
 
         }
 

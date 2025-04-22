@@ -60,7 +60,7 @@ public class PluginCommands implements CommandExecutor {
 
             for (Player players : Bukkit.getOnlinePlayers()) {
                 if (!AutoBuy.getAutoBuyItemsMap().containsKey(players.getUniqueId())) {
-                    AutoBuy.checkPlayer(players.getUniqueId());
+                    AutoBuy.loadPlayerAutoBuyAsync(players.getUniqueId());
                 }
             }
 

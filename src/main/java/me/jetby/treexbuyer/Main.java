@@ -5,6 +5,7 @@ import me.jetby.treexbuyer.commands.PluginCompleter;
 import me.jetby.treexbuyer.configurations.Config;
 import me.jetby.treexbuyer.dataBase.DatabaseUtils;
 import me.jetby.treexbuyer.listeners.OnJoin;
+import me.jetby.treexbuyer.listeners.OnQuit;
 import me.jetby.treexbuyer.menu.*;
 import me.jetby.treexbuyer.autoBuy.AutoBuy;
 import me.jetby.treexbuyer.configurations.PriceItemCfg;
@@ -31,8 +32,9 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import static me.jetby.treexbuyer.autoBuy.AutoBuy.getAutoBuyStatus;
-import static me.jetby.treexbuyer.boost.CoefficientManager.addPlayerScores;
-import static me.jetby.treexbuyer.boost.CoefficientManager.getPlayerCoefficient;
+import static me.jetby.treexbuyer.autoBuy.AutoBuy.savePlayerScoreAsync;
+import static me.jetby.treexbuyer.boost.CoefficientManager.*;
+import static me.jetby.treexbuyer.boost.CoefficientManager.getCachedScores;
 import static me.jetby.treexbuyer.configurations.Config.CFG;
 import static me.jetby.treexbuyer.utils.Hex.hex;
 
@@ -70,32 +72,41 @@ public final class Main extends JavaPlugin {
         menuManager = new MenuManager(MenuLoader.getListMenu());
         getServer().getPluginManager().registerEvents(new MenuListener(), this);
         getServer().getPluginManager().registerEvents(new OnJoin(), this);
+        getServer().getPluginManager().registerEvents(new OnQuit(), this);
 
         this.databaseManager = new DatabaseUtils();
-        DatabaseUtils.initDatabase();
+        databaseManager.initDatabase();
 
 
         createCommand(); // создаём все команды
         getCommand("treexbuyer").setExecutor(new PluginCommands());
         getCommand("treexbuyer").setTabCompleter(new PluginCompleter());
 
-        String path = CFG().getString("priceItem.path");
+        String path = CFG().getString("priceItem.path", "priceItem.yml");
         File itemFile = new File(getDataFolder(), path);
         itemPrice = PriseItemLoader.loadItemValuesFromFile(itemFile);
-        
+
         startAutoBuy();
 
-
-
         new Metrics(this, 25141);
+
+
     }
+
+
 
     @Override
     public void onDisable() {
         if (placeholderExpansion != null) {
             placeholderExpansion.unregister();
         }
+
         if (databaseManager != null) {
+            for (UUID uuid : getCachedScores().keySet()) {
+                if (getCachedScores().containsKey(uuid)) {
+                    AutoBuy.savePlayerScore(uuid);
+                }
+            }
             databaseManager.closeConnection();
         }
         getLogger().warning("[TreexBuyer] Плагин отключён.");

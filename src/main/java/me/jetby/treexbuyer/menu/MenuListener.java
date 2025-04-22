@@ -66,7 +66,7 @@ public class MenuListener implements Listener {
         double totalMoney = 0;
         double totalScores = 0;
         double finalTotalScores = totalScores;
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getInstance(), () -> {
             List<ItemStack> itemStacks = new ArrayList<>();
             for (int i = 0; i < topInventory.getSize(); i++) {
                 ItemStack itemStack = topInventory.getItem(i);
@@ -87,7 +87,7 @@ public class MenuListener implements Listener {
                         SellZone.getCountPlayerString(player.getUniqueId(), Integer.valueOf(String.valueOf(df.format(finalTotalScores)))),
                         player);
             }
-        }, 1L);
+        }, 10L);
 
 
 
@@ -197,7 +197,7 @@ public class MenuListener implements Listener {
         }
     }
 
-    private void checkForItems(Player player, String type, ItemStack itemStack) {
+    private void sell_item(Player player, String type, ItemStack itemStack) {
         double sumCount = 0d;
         int totalScores = 0;
         ItemStack air = new ItemStack(Material.AIR);
@@ -278,7 +278,7 @@ public class MenuListener implements Listener {
         String[] args = command.split(" ");
         String withoutCMD = command.replace(args[0] + " ", "");
         if (args[0].equalsIgnoreCase("[sell_item]")) {
-            checkForItems(player, withoutCMD, new ItemStack(button.getMaterialButton()));
+            sell_item(player, withoutCMD, new ItemStack(button.getMaterialButton()));
             return;
         }
 
@@ -389,24 +389,7 @@ public class MenuListener implements Listener {
             }
 
     }
-    @EventHandler
-    public void onInventoryOpen(InventoryOpenEvent event) {
-        Player player = (Player) event.getPlayer();
-        Inventory topInventory = event.getInventory();
-        if (!(topInventory.getHolder() instanceof Menu menu)) {
-            return;
-        }
 
-
-        for (MenuButton btn : menu.getButtons()) {
-            List<ItemStack> itemStacks = new ArrayList<>();
-            SellZone.checkItem(itemStacks, Main.getInstance().getItemPrice(), player);
-
-
-            updateMenu(btn, topInventory, SellZone.getCountPlayerString(player.getUniqueId(), 0), player);
-
-        }
-    }
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
