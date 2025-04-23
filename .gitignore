@@ -1,2 +1,26 @@
-# Project exclude paths
+# IDEA
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+
+*.launch
+
+# VSCode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# macOS
+
+*.DS_Store
+
+# Maven
+
 /target/
